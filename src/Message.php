@@ -8,7 +8,6 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use fize\io\File;
 use fize\io\Stream as StreamIO;
-use fize\stream\Stream;
 
 /**
  * HTTP 消息
@@ -260,5 +259,32 @@ class Message implements MessageInterface
 
             return trim((string)$value, " \t");
         }, $values);
+    }
+
+    /**
+     * 设置报头信息
+     * @param array $headers 报头信息
+     */
+    protected function setHeaders(array $headers)
+    {
+        $this->headers = [];
+        foreach ($headers as $name => $value) {
+            if (is_int($name)) {
+                // Numeric array keys are converted to int by PHP but having a header name '123' is not forbidden by the spec
+                // and also allowed in withHeader(). So we need to cast it to string again for the following assertion to pass.
+                $name = (string) $name;
+            }
+            $this->assertHeaderName($name);
+            $value = $this->normalizeHeaderValue($value);
+            $orig_name = $this->getRealHeaderName($name);
+
+            if ($orig_name) {
+                $orig_value = $this->headers[$orig_name];
+                unset($this->headers[$orig_name]);
+                $this->headers[$name] = array_merge($orig_value, $value);
+            } else {
+                $this->headers[$name] = $value;
+            }
+        }
     }
 }

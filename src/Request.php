@@ -9,7 +9,9 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use fize\misc\Preg;
 
-
+/**
+ * HTTP 请求
+ */
 class Request extends Message implements RequestInterface
 {
 
@@ -28,6 +30,14 @@ class Request extends Message implements RequestInterface
      */
     protected $method;
 
+    /**
+     * 构造
+     * @param string $method 请求方式
+     * @param string|UriInterface $uri 请求URI
+     * @param array $headers 报头信息
+     * @param string|null|resource|StreamInterface $body 请求体
+     * @param string $protocol_version 协议版本
+     */
     public function __construct($method, $uri, array $headers = [], $body = null, $protocol_version = '1.1')
     {
         $this->assertMethod($method);
@@ -38,14 +48,14 @@ class Request extends Message implements RequestInterface
         $this->method = strtoupper($method);
         $this->uri = $uri;
         $this->setHeaders($headers);
-        $this->protocol = $version;
+        $this->protocolVersion = $protocol_version;
 
         if (!isset($this->headerNames['host'])) {
             $this->updateHostFromUri();
         }
 
         if ($body !== '' && $body !== null) {
-            $this->stream = stream_for($body);
+            $this->stream = Stream::create($body);
         }
     }
 

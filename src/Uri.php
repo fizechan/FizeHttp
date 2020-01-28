@@ -8,7 +8,7 @@ use Psr\Http\Message\UriInterface;
 use fize\misc\Preg;
 
 /**
- * URI对象
+ * URI 对象
  */
 class Uri implements UriInterface
 {
