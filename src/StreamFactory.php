@@ -3,8 +3,12 @@
 
 namespace fize\http;
 
+use fize\stream\StreamFactory as Base;
 
-class StreamFactory
+/**
+ * HTTP 数据流工厂类
+ */
+class StreamFactory extends Base
 {
 
 }

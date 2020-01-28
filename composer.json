@@ -16,7 +16,7 @@
         "psr/http-client": "~1.0",
         "psr/http-server-middleware": "~1.0",
         "psr/http-server-handler": "~1.0",
-        "fize/stream": "~0.1",
+        "fize/stream": "~0.2",
         "fize/misc": "~0.1",
         "fize/io": "~3.4"
     },
