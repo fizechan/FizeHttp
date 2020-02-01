@@ -8,8 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use fize\stream\realization\CachingStream;
-use fize\stream\realization\LazyOpenStream;
+use fize\stream\protocol\CachingStream;
+use fize\stream\protocol\LazyOpenStream;
 
 /**
  * 服务器端 HTTP 请求

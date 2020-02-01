@@ -7,7 +7,7 @@ use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use fize\stream\realization\LazyOpenStream;
+use fize\stream\protocol\LazyOpenStream;
 
 /**
  * HTTP 文件上传

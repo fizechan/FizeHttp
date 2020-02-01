@@ -18,17 +18,17 @@ class Client implements ClientInterface
     /**
      * @var string 保存COOKIE的文件夹路径,为null时表示不使用COOKIE
      */
-    private $cookieFileDir = null;
+    private $cookieFileDir;
 
     /**
      * @var int 设定超时时间，单位秒
      */
-    private $timeOut = 30;
+    private $timeOut;
 
     /**
      * @var int CURL重试次数
      */
-    private $retries = 1;
+    private $retries;
 
     /**
      * @var array CURL选项

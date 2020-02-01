@@ -8,14 +8,12 @@ namespace fize\http;
 class CurlMulti
 {
     /**
-     * 当前的 cURL 批处理句柄
-     * @var resource
+     * @var resource 当前的 cURL 批处理句柄
      */
     private $mh;
 
     /**
-     * 已添加的单独 CURL 对象句柄
-     * @var array
+     * @var array 已添加的单独 CURL 对象句柄
      */
     private $handles = [];
 

@@ -16,12 +16,12 @@ class Response extends Message implements ResponseInterface
     /**
      * @var int 状态码
      */
-    private $statusCode = 200;
+    private $statusCode;
 
     /**
      * @var string 状态短语
      */
-    private $reasonPhrase = '';
+    private $reasonPhrase;
 
     /**
      * @var array 所有状态短语

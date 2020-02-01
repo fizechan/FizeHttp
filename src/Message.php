@@ -6,8 +6,6 @@ namespace fize\http;
 use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
-use fize\io\File;
-use fize\io\Stream as StreamIO;
 
 /**
  * HTTP 消息
@@ -169,9 +167,7 @@ class Message implements MessageInterface
     public function getBody()
     {
         if (!$this->stream) {
-            $file = new File('php://temp', 'r+');
-            $stream = new StreamIO($file->getStream());
-            $this->stream = new Stream($stream);
+            $this->stream = new Stream('php://temp', 'r+');
         }
 
         return $this->stream;

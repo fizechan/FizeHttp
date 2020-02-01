@@ -22,19 +22,17 @@ class Curl
      *
      * @var resource 当前会话句柄
      */
-    private $handle = null;
+    private $handle;
 
     /**
-     * 当前会话设置数组
-     * @var array
+     * @var array 当前会话设置数组
      */
     private $opt = [];
 
     /**
-     * 当前会话是否可分享
-     * @var bool
+     * @var bool 当前会话是否可分享
      */
-    private $share = false;
+    private $share;
 
 
     /**
