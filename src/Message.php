@@ -10,7 +10,7 @@ use Psr\Http\Message\StreamInterface;
 /**
  * HTTP 消息
  */
-class Message implements MessageInterface
+abstract class Message implements MessageInterface
 {
 
     /**

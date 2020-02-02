@@ -46,6 +46,7 @@ class Client implements ClientInterface
         $this->cookieFileDir = $cookie_dir;
         $this->timeOut = $time_out;
         $this->retries = $retries;
+        $this->reset();
     }
 
     /**
@@ -55,8 +56,6 @@ class Client implements ClientInterface
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        $this->reset();
-
         $url = (string)$request->getUri();
         if(empty($url)) {
             throw new RequestException($request);
@@ -65,9 +64,9 @@ class Client implements ClientInterface
             throw new RequestException($request);
         }
 
-        $this->addOption(CURLOPT_URL, $url);
-        $this->addOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
-        $this->addOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
+        $this->setOption(CURLOPT_URL, $url);
+        $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
+        $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
         if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
             $cookie_file = $this->cookieFileDir . "{$request->getUri()->getHost()}.cookie";
             new File($cookie_file, 'w'); //自动创建文件
@@ -76,7 +75,7 @@ class Client implements ClientInterface
                 CURLOPT_COOKIEJAR  => $cookie_file, //调用后保存cookie的文件
                 CURLOPT_COOKIEFILE => $cookie_file, //要一起传送的cookie的文件
             ];
-            $this->addOptions($pls_opts);
+            $this->setOptions($pls_opts);
         }
 
         $curl = new Curl();
@@ -106,7 +105,6 @@ class Client implements ClientInterface
         $curl->close();
 
         if (isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] && isset($headers['Location']) && !empty($headers['Location'])) {
-            //@todo 是否需要加上跳转来源URL
             if ($headers['Location'] == $url) {
                 return new Response(intval($status["http_code"]), $headers, $body);
             }
@@ -115,13 +113,15 @@ class Client implements ClientInterface
             return $this->sendRequest($request);
         }
 
+        $this->reset();
+
         return new Response(intval($status["http_code"]), $headers, $body);
     }
 
     /**
      * 重置CURL选项
      */
-    public function reset()
+    private function reset()
     {
         //默认配置
         $def_opts = [
@@ -142,11 +142,11 @@ class Client implements ClientInterface
     }
 
     /**
-     * 添加CURL选项
+     * 设置CURL选项
      * @param int $key 键名
      * @param mixed $value 键值
      */
-    public function addOption($key, $value)
+    public function setOption($key, $value)
     {
         $this->options[$key] = $value;
     }
@@ -155,7 +155,7 @@ class Client implements ClientInterface
      * 批量添加CURL选项
      * @param array $options CURL选项
      */
-    public function addOptions(array $options)
+    public function setOptions(array $options)
     {
         $this->options = $this->options + $options; //本处由于是数字键名，所以不能使用array_merge
     }

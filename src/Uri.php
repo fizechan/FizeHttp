@@ -223,7 +223,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * 返回认证信息
+     * 返回验证信息
      * @return string
      */
     public function getAuthority()
@@ -450,7 +450,9 @@ class Uri implements UriInterface
     }
 
     /**
-     * 判断URI是否为网络路径
+     * 判断URI是否为网络路径引用
+     *
+     * 以两个斜杠字符开头的相对引用称为网络路径引用
      * @param UriInterface $uri URI对象
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
@@ -464,7 +466,7 @@ class Uri implements UriInterface
      * 判断URI是否为绝对路径
      * @param UriInterface $uri URI对象
      * @return bool
-     * @link https://tools.ietf.org/html/rfc3986#section-4.2
+     * @link https://tools.ietf.org/html/rfc3986#section-4.3
      */
     public static function isAbsolutePathReference(UriInterface $uri)
     {
@@ -484,6 +486,9 @@ class Uri implements UriInterface
 
     /**
      * 判断两个URI对象是否指向同一个资源
+     *
+     * 参数 `$base`:
+     *   未提供参数则认为是和默认初始目录进行比较
      * @param UriInterface $uri 要检验的URI对象
      * @param UriInterface|null $base 用于检验的URI对象
      * @return bool
@@ -702,7 +707,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('User info must be a string');
         }
 
-        return Preg::replaceCallback(
+        return preg_replace_callback(
             '/(?:[^%' . self::$charUnreserved . self::$charSubDelims . ']+|%(?![A-Fa-f0-9]{2}))/',
             [$this, 'rawurlencodeMatchZero'],
             $component
@@ -755,7 +760,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Path must be a string');
         }
 
-        return Preg::replaceCallback(
+        return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
             [$this, 'rawurlencodeMatchZero'],
             $path
@@ -773,7 +778,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Query and fragment must be a string');
         }
 
-        return Preg::replaceCallback(
+        return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
             [$this, 'rawurlencodeMatchZero'],
             $str
