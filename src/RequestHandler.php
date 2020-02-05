@@ -22,6 +22,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        //业务逻辑处理
         return new Response();
     }
 }

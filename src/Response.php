@@ -94,13 +94,13 @@ class Response extends Message implements ResponseInterface
 
     /**
      * 构造
+     * @param string|null|resource|StreamInterface $body 响应体
      * @param int $status 状态码
      * @param array $headers 报头
-     * @param string|null|resource|StreamInterface $body 响应体
      * @param string $protocol_version 协议版本
      * @param string|null $reason 状态短语
      */
-    public function __construct($status = 200, array $headers = [], $body = null, $protocol_version = '1.1', $reason = null)
+    public function __construct($body = null, $status = 200, array $headers = [], $protocol_version = '1.1', $reason = null)
     {
         $this->assertStatusCodeIsInteger($status);
         $status = (int)$status;

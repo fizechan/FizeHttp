@@ -34,11 +34,11 @@ class Request extends Message implements RequestInterface
      * 构造
      * @param string $method 请求方式
      * @param string|UriInterface $uri 请求URI
-     * @param array $headers 报头信息
      * @param string|null|resource|StreamInterface $body 请求体
+     * @param array $headers 报头信息
      * @param string $protocol_version 协议版本
      */
-    public function __construct($method, $uri, array $headers = [], $body = null, $protocol_version = '1.1')
+    public function __construct($method, $uri, $body = null, array $headers = [], $protocol_version = '1.1')
     {
         $this->assertMethod($method);
         if (!($uri instanceof UriInterface)) {
@@ -50,7 +50,7 @@ class Request extends Message implements RequestInterface
         $this->setHeaders($headers);
         $this->protocolVersion = $protocol_version;
 
-        if (!isset($this->headerNames['host'])) {
+        if (!$this->hasHeader('host')) {
             $this->updateHostFromUri();
         }
 
@@ -82,7 +82,7 @@ class Request extends Message implements RequestInterface
 
     /**
      * 返回一个指定目标的请求实例
-     * @param mixed $requestTarget
+     * @param string $requestTarget 请求目标
      * @return self
      */
     public function withRequestTarget($requestTarget)

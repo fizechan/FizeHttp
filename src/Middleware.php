@@ -24,6 +24,7 @@ class Middleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        return new Response();
+        //可以在此进行其他业务逻辑处理
+        return $handler->handle($request);
     }
 }

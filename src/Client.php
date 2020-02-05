@@ -50,7 +50,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * 发送一个 PSR-7 标准的请求，返回一个 PSR-7 格式的响应
+     * 发送一个 PSR-7 标准的请求，返回一个 PSR-7 标准的响应
      * @param RequestInterface $request 请求
      * @return ResponseInterface
      */
@@ -64,9 +64,11 @@ class Client implements ClientInterface
             throw new RequestException($request);
         }
 
+        $this->setOption(CURLOPT_HTTP_VERSION, $request->getProtocolVersion());
         $this->setOption(CURLOPT_URL, $url);
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
+        $this->setOption(CURLOPT_POSTFIELDS, (string)$request->getBody());
         if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
             $cookie_file = $this->cookieFileDir . "{$request->getUri()->getHost()}.cookie";
             new File($cookie_file, 'w'); //自动创建文件
@@ -106,7 +108,7 @@ class Client implements ClientInterface
 
         if (isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] && isset($headers['Location']) && !empty($headers['Location'])) {
             if ($headers['Location'] == $url) {
-                return new Response(intval($status["http_code"]), $headers, $body);
+                return new Response($body, intval($status["http_code"]), $headers);
             }
 
             $request = $request->withUri(new Uri($headers['Location']));
@@ -115,7 +117,7 @@ class Client implements ClientInterface
 
         $this->reset();
 
-        return new Response(intval($status["http_code"]), $headers, $body);
+        return new Response($body, intval($status["http_code"]), $headers);
     }
 
     /**

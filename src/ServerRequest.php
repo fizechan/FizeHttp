@@ -51,15 +51,15 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 构造
      * @param string $method 请求方式
      * @param string|UriInterface $uri 请求URI
-     * @param array $headers 报头信息
      * @param string|null|resource|StreamInterface $body 请求体
-     * @param string $protocol_version 协议版本
+     * @param array $headers 报头信息
      * @param array $serverParams 服务器参数，如 $_SERVER
+     * @param string $protocol_version 协议版本
      */
-    public function __construct($method, $uri, array $headers = [], $body = null, $protocol_version = '1.1', array $serverParams = [])
+    public function __construct($method, $uri, $body = null, array $headers = [], array $serverParams = [], $protocol_version = '1.1')
     {
         $this->serverParams = $serverParams;
-        parent::__construct($method, $uri, $headers, $body, $protocol_version);
+        parent::__construct($method, $uri, $body, $headers, $protocol_version);
     }
 
     /**
@@ -301,7 +301,7 @@ class ServerRequest extends Request implements ServerRequestInterface
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
 
-        $serverRequest = new static($method, $uri, $headers, $body, $protocol, $_SERVER);
+        $serverRequest = new static($method, $uri, $body, $headers, $_SERVER, $protocol);
 
         return $serverRequest
             ->withCookieParams($_COOKIE)
