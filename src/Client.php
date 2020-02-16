@@ -68,7 +68,10 @@ class Client implements ClientInterface
         $this->setOption(CURLOPT_URL, $url);
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
-        $this->setOption(CURLOPT_POSTFIELDS, (string)$request->getBody());
+        $body = (string)$request->getBody();
+        if($body) {
+            $this->setOption(CURLOPT_POSTFIELDS, $body);
+        }
         if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
             $cookie_file = $this->cookieFileDir . "{$request->getUri()->getHost()}.cookie";
             new File($cookie_file, 'w'); //自动创建文件

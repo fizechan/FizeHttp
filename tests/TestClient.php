@@ -20,9 +20,18 @@ class TestClient extends TestCase
     {
         $client = new Client();
         $headers = [
-            'accept' => 'application/json'
+            'Content-Type' => 'application/x-www-form-urlencoded'
         ];
-        $request = new Request('DELETE', 'https://httpbin.org/delete', null, $headers);
+        $body = [
+            'q' => '定制化翻译API语言方向目前只支持中文和英文。',
+            'from' => 'zh',
+            'to' => 'en',
+            'appid' => '20160118000009064',
+            'salt' => '123456',
+            'sign' => '9ac0dad8ab7abafc710bf5a9a8516e51'
+        ];
+        $body = http_build_query($body);
+        $request = new Request('POST', 'http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
         $response = $client->sendRequest($request);
         var_dump($response);
         var_dump($response->getStatusCode());
