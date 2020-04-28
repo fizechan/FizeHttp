@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -14,12 +13,12 @@ class ResponseFactory implements ResponseFactoryInterface
 
     /**
      * 创建一个响应对象
-     * @param int $code HTTP 状态码
+     * @param int    $code         HTTP 状态码
      * @param string $reasonPhrase 状态码短语
      * @return ResponseInterface
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        return new Response(null,$code, [], '1.1', $reasonPhrase);
+        return new Response(null, $code, [], '1.1', $reasonPhrase);
     }
 }

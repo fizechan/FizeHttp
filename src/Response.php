@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use InvalidArgumentException;
@@ -94,11 +93,11 @@ class Response extends Message implements ResponseInterface
 
     /**
      * 构造
-     * @param string|null|resource|StreamInterface $body 响应体
-     * @param int $status 状态码
-     * @param array $headers 报头
-     * @param string $protocol_version 协议版本
-     * @param string|null $reason 状态短语
+     * @param string|null|resource|StreamInterface $body             响应体
+     * @param int                                  $status           状态码
+     * @param array                                $headers          报头
+     * @param string                               $protocol_version 协议版本
+     * @param string|null                          $reason           状态短语
      */
     public function __construct($body = null, $status = 200, array $headers = [], $protocol_version = '1.1', $reason = null)
     {
@@ -133,14 +132,14 @@ class Response extends Message implements ResponseInterface
 
     /**
      * 返回具有指定状态码和原因短语的实例
-     * @param int $code 状态码
+     * @param int    $code         状态码
      * @param string $reasonPhrase 状态短语
      * @return static
      */
     public function withStatus($code, $reasonPhrase = '')
     {
         $this->assertStatusCodeIsInteger($code);
-        $code = (int) $code;
+        $code = (int)$code;
         $this->assertStatusCodeRange($code);
 
         $new = clone $this;

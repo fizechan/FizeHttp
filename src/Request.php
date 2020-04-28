@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use InvalidArgumentException;
@@ -32,11 +31,11 @@ class Request extends Message implements RequestInterface
 
     /**
      * 构造
-     * @param string $method 请求方式
-     * @param string|UriInterface $uri 请求URI
-     * @param string|null|resource|StreamInterface $body 请求体
-     * @param array $headers 报头信息
-     * @param string $protocol_version 协议版本
+     * @param string                               $method           请求方式
+     * @param string|UriInterface                  $uri              请求URI
+     * @param string|null|resource|StreamInterface $body             请求体
+     * @param array                                $headers          报头信息
+     * @param string                               $protocol_version 协议版本
      */
     public function __construct($method, $uri, $body = null, array $headers = [], $protocol_version = '1.1')
     {
@@ -129,8 +128,8 @@ class Request extends Message implements RequestInterface
 
     /**
      * 返回修改了 URI 的消息实例
-     * @param UriInterface $uri URI 对象
-     * @param bool $preserveHost 是否保持原 HOST 信息
+     * @param UriInterface $uri          URI 对象
+     * @param bool         $preserveHost 是否保持原 HOST 信息
      * @return self
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
@@ -169,7 +168,7 @@ class Request extends Message implements RequestInterface
         }
 
         $name = $this->getRealHeaderName('host');
-        if(is_null($name)) {
+        if (is_null($name)) {
             $name = 'Host';
         }
 

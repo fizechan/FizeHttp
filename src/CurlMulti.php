@@ -3,7 +3,7 @@
 namespace fize\http;
 
 /**
- * 多进程 CURL 操作类
+ * 多进程 CURL
  */
 class CurlMulti
 {
@@ -164,8 +164,8 @@ class CurlMulti
 
     /**
      * 为当前并行处理设置一个选项
-     * @param int $option 常量 CURLMOPT_* 之一。
-     * @param mixed $value 将要设置给 option 的值。
+     * @param int   $option 常量 CURLMOPT_* 之一。
+     * @param mixed $value  将要设置给 option 的值。
      * @return bool
      */
     public function setopt($option, $value)

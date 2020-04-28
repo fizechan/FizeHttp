@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use Psr\Http\Message\ResponseInterface;
@@ -22,7 +21,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        //业务逻辑处理
+        // 业务逻辑处理
         return new Response();
     }
 }

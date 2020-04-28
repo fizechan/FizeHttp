@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use InvalidArgumentException;
@@ -180,11 +179,11 @@ class Uri implements UriInterface
 
     /**
      * 组装部件，返回完整URI
-     * @param string $scheme 协议
+     * @param string $scheme    协议
      * @param string $authority 认证
-     * @param string $path 路径
-     * @param string $query 参数
-     * @param string $fragment 锚点
+     * @param string $path      路径
+     * @param string $query     参数
+     * @param string $fragment  锚点
      * @return string
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
@@ -317,7 +316,7 @@ class Uri implements UriInterface
 
     /**
      * 返回指定用户信息的实例
-     * @param string $user 用户名
+     * @param string      $user     用户名
      * @param string|null $password 密码
      * @return static
      */
@@ -489,7 +488,7 @@ class Uri implements UriInterface
      *
      * 参数 `$base`:
      *   未提供参数则认为是和默认初始目录进行比较
-     * @param UriInterface $uri 要检验的URI对象
+     * @param UriInterface      $uri  要检验的URI对象
      * @param UriInterface|null $base 用于检验的URI对象
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.4
@@ -564,7 +563,7 @@ class Uri implements UriInterface
     /**
      * 移除指定参数
      * @param UriInterface $uri URI对象
-     * @param string $key 键名
+     * @param string       $key 键名
      * @return UriInterface
      */
     public static function withoutQueryValue(UriInterface $uri, $key)
@@ -576,9 +575,9 @@ class Uri implements UriInterface
 
     /**
      * 添加指定参数
-     * @param UriInterface $uri URI对象
-     * @param string $key 键名
-     * @param string|null $value 键值
+     * @param UriInterface $uri   URI对象
+     * @param string       $key   键名
+     * @param string|null  $value 键值
      * @return UriInterface
      */
     public static function withQueryValue(UriInterface $uri, $key, $value)
@@ -592,8 +591,8 @@ class Uri implements UriInterface
 
     /**
      * 添加多个参数
-     * @param UriInterface $uri URI对象
-     * @param array $keyValueArray 参数键值对
+     * @param UriInterface $uri           URI对象
+     * @param array        $keyValueArray 参数键值对
      * @return UriInterface
      */
     public static function withQueryValues(UriInterface $uri, array $keyValueArray)
@@ -609,8 +608,8 @@ class Uri implements UriInterface
 
     /**
      * 获取参数列表
-     * @param UriInterface $uri URI对象
-     * @param array $keys 键名在该数组内的将不返回
+     * @param UriInterface $uri  URI对象
+     * @param array        $keys 键名在该数组内的将不返回
      * @return array 数组项格式为x=y
      */
     private static function getFilteredQueryString(UriInterface $uri, array $keys)
@@ -633,7 +632,7 @@ class Uri implements UriInterface
 
     /**
      * 根据键名键值创建参数段
-     * @param string $key 键名
+     * @param string      $key   键名
      * @param string|null $value 键值，为null则不添加
      * @return string
      */
@@ -828,8 +827,8 @@ class Uri implements UriInterface
 
     /**
      * 标准化URI
-     * @param UriInterface $uri URI对象
-     * @param int $flags 选项
+     * @param UriInterface $uri   URI对象
+     * @param int          $flags 选项
      * @return UriInterface
      */
     public static function normalize(UriInterface $uri, $flags = self::PRESERVING_NORMALIZATIONS)
@@ -912,7 +911,7 @@ class Uri implements UriInterface
     /**
      * 将相对URI转换为根据基准URI解析的新URI。
      * @param UriInterface $base 基准URI
-     * @param UriInterface $rel 相对URI
+     * @param UriInterface $rel  相对URI
      * @return UriInterface
      */
     public static function resolve(UriInterface $base, UriInterface $rel)
@@ -966,7 +965,7 @@ class Uri implements UriInterface
 
     /**
      * 根据基准URI返回目标URI的相对路径URI
-     * @param UriInterface $base 基准URI
+     * @param UriInterface $base   基准URI
      * @param UriInterface $target 目标URI
      * @return UriInterface
      */
@@ -1015,7 +1014,7 @@ class Uri implements UriInterface
 
     /**
      * 根据基准URI返回目标URI的相对路径
-     * @param UriInterface $base 基准URI
+     * @param UriInterface $base   基准URI
      * @param UriInterface $target 目标URI
      * @return string
      */

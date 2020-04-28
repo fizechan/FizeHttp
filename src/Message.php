@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use InvalidArgumentException;
@@ -105,7 +104,7 @@ abstract class Message implements MessageInterface
      * 返回替换指定报头信息「键/值」对的消息实例
      *
      * 键名不区分大小写
-     * @param string $name 键名
+     * @param string          $name  键名
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
@@ -124,7 +123,7 @@ abstract class Message implements MessageInterface
 
     /**
      * 返回一个报头信息增量的 HTTP 消息实例
-     * @param string $name 键名
+     * @param string          $name  键名
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
@@ -268,7 +267,7 @@ abstract class Message implements MessageInterface
             if (is_int($name)) {
                 // Numeric array keys are converted to int by PHP but having a header name '123' is not forbidden by the spec
                 // and also allowed in withHeader(). So we need to cast it to string again for the following assertion to pass.
-                $name = (string) $name;
+                $name = (string)$name;
             }
             $this->assertHeaderName($name);
             $value = $this->normalizeHeaderValue($value);

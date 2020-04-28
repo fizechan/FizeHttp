@@ -1,13 +1,12 @@
 <?php
 
-
 namespace fize\http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 use fize\stream\protocol\CachingStream;
 use fize\stream\protocol\LazyOpenStream;
 
@@ -49,12 +48,12 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * 构造
-     * @param string $method 请求方式
-     * @param string|UriInterface $uri 请求URI
-     * @param string|null|resource|StreamInterface $body 请求体
-     * @param array $headers 报头信息
-     * @param array $serverParams 服务器参数，如 $_SERVER
-     * @param string $protocol_version 协议版本
+     * @param string                               $method           请求方式
+     * @param string|UriInterface                  $uri              请求URI
+     * @param string|null|resource|StreamInterface $body             请求体
+     * @param array                                $headers          报头信息
+     * @param array                                $serverParams     服务器参数，如 $_SERVER
+     * @param string                               $protocol_version 协议版本
      */
     public function __construct($method, $uri, $body = null, array $headers = [], array $serverParams = [], $protocol_version = '1.1')
     {
@@ -176,8 +175,8 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * 获取单个派生的请求属性
-     * @param string $name 键名
-     * @param mixed $default 默认值
+     * @param string $name    键名
+     * @param mixed  $default 默认值
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -191,8 +190,8 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * 返回具有指定派生属性的实例
-     * @param string $name 键名
-     * @param mixed $value 键值
+     * @param string $name  键名
+     * @param mixed  $value 键值
      * @return static
      */
     public function withAttribute($name, $value)
@@ -258,8 +257,8 @@ class ServerRequest extends Request implements ServerRequestInterface
 
         return new UploadedFile(
             $value['tmp_name'],
-            (int) $value['size'],
-            (int) $value['error'],
+            (int)$value['size'],
+            (int)$value['error'],
             $value['name'],
             $value['type']
         );
@@ -365,7 +364,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     private static function extractHostAndPortFromAuthority($authority)
     {
-        $uri = 'http://'.$authority;
+        $uri = 'http://' . $authority;
         $parts = parse_url($uri);
         if (false === $parts) {
             return [null, null];

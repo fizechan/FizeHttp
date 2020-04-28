@@ -2,11 +2,10 @@
 
 namespace fize\http;
 
-
 use CURLFile;
 
 /**
- * CURL 类
+ * CURL
  * @todo 尚有几处未知的参数意义需要补齐
  */
 class Curl
@@ -180,7 +179,7 @@ class Curl
     public function setHandle(&$handle)
     {
         $this->handle = $handle;
-        $this->opt = []; //使用此方法则无法获取到已有设置，只能重新设置了。
+        $this->opt = []; // 使用此方法则无法获取到已有设置，只能重新设置了。
     }
 
     /**

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use fize\stream\StreamFactory as Base;

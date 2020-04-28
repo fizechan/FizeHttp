@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\http;
 
 use Throwable;
@@ -20,10 +19,10 @@ class NetworkException extends ClientException implements NetworkExceptionInterf
 
     /**
      * 构造
-     * @param RequestInterface $request 请求体
-     * @param string $message 错误信息
-     * @param int $code 错误码
-     * @param Throwable|null $previous 用于异常链接
+     * @param RequestInterface $request  请求体
+     * @param string           $message  错误信息
+     * @param int              $code     错误码
+     * @param Throwable|null   $previous 用于异常链接
      */
     public function __construct(RequestInterface $request, $message = "", $code = 0, Throwable $previous = null)
     {

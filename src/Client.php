@@ -2,12 +2,10 @@
 
 namespace fize\http;
 
-
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use fize\io\File;
-
 
 /**
  * Http 客户端
@@ -37,9 +35,9 @@ class Client implements ClientInterface
 
     /**
      * 初始化
-     * @param string $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
-     * @param int $time_out 设定超时时间,默认30秒
-     * @param integer $retries curl重试次数
+     * @param string  $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
+     * @param int     $time_out   设定超时时间,默认30秒
+     * @param integer $retries    curl重试次数
      */
     public function __construct($cookie_dir = null, $time_out = 30, $retries = 1)
     {
@@ -57,7 +55,7 @@ class Client implements ClientInterface
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $url = (string)$request->getUri();
-        if(empty($url)) {
+        if (empty($url)) {
             throw new RequestException($request);
         }
         if (empty($request->getMethod())) {
@@ -69,7 +67,7 @@ class Client implements ClientInterface
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
         $body = (string)$request->getBody();
-        if($body) {
+        if ($body) {
             $this->setOption(CURLOPT_POSTFIELDS, $body);
         }
         if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
@@ -148,7 +146,7 @@ class Client implements ClientInterface
 
     /**
      * 设置CURL选项
-     * @param int $key 键名
+     * @param int   $key   键名
      * @param mixed $value 键值
      */
     public function setOption($key, $value)

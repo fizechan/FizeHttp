@@ -1,10 +1,9 @@
 <?php
 
-
 namespace fize\http;
 
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use fize\stream\protocol\LazyOpenStream;
@@ -66,11 +65,11 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * 构造
-     * @param StreamInterface|string|resource $streamOrFile 文件或数据流
-     * @param int $size 字节数
-     * @param int $errorStatus 错误码
-     * @param string $clientFilename 文件名称
-     * @param string $clientMediaType 文件类型
+     * @param StreamInterface|string|resource $streamOrFile    文件或数据流
+     * @param int                             $size            字节数
+     * @param int                             $errorStatus     错误码
+     * @param string                          $clientFilename  文件名称
+     * @param string                          $clientMediaType 文件类型
      */
     public function __construct($streamOrFile, $size, $errorStatus, $clientFilename = null, $clientMediaType = null)
     {
