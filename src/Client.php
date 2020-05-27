@@ -62,7 +62,17 @@ class Client implements ClientInterface
             throw new RequestException($request);
         }
 
-        $this->setOption(CURLOPT_HTTP_VERSION, $request->getProtocolVersion());
+        $http_version =  CURL_HTTP_VERSION_NONE;
+        $protocol_version = $request->getProtocolVersion();
+        if ($protocol_version == '1.0') {
+            $http_version = CURL_HTTP_VERSION_1_0;
+        } elseif ($protocol_version == '1.1') {
+            $http_version = CURL_HTTP_VERSION_1_1;
+        } elseif ($protocol_version == '2.0') {
+            $http_version = CURL_HTTP_VERSION_2_0;
+        }
+
+        $this->setOption(CURLOPT_HTTP_VERSION, $http_version);
         $this->setOption(CURLOPT_URL, $url);
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
