@@ -29,7 +29,12 @@ class Client implements ClientInterface
     private $retries;
 
     /**
-     * @var array CURL选项
+     * @var Curl Curl对象
+     */
+    private $curl;
+
+    /**
+     * @var array Curl选项
      */
     private $options = [];
 
@@ -45,6 +50,14 @@ class Client implements ClientInterface
         $this->timeOut = $time_out;
         $this->retries = $retries;
         $this->reset();
+    }
+
+    /**
+     * 析构
+     */
+    public function __destruct()
+    {
+        $this->curl->close();
     }
 
     /**
@@ -71,15 +84,12 @@ class Client implements ClientInterface
         } elseif ($protocol_version == '2.0') {
             $http_version = CURL_HTTP_VERSION_2_0;
         }
-
         $this->setOption(CURLOPT_HTTP_VERSION, $http_version);
+
         $this->setOption(CURLOPT_URL, $url);
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
-        $body = (string)$request->getBody();
-        if ($body) {
-            $this->setOption(CURLOPT_POSTFIELDS, $body);
-        }
+
         if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
             $cookie_file = $this->cookieFileDir . "{$request->getUri()->getHost()}.cookie";
             new File($cookie_file, 'w'); //自动创建文件
@@ -91,33 +101,37 @@ class Client implements ClientInterface
             $this->setOptions($pls_opts);
         }
 
-        $curl = new Curl();
+        $body = (string)$request->getBody();
+        if ($body) {
+            $this->setOption(CURLOPT_POSTFIELDS, $body);
+        }
 
-        $curl->setoptArray($this->options);
-        $content = $curl->exec();
-        $status = $curl->getinfo();
+        $content = $this->curl->exec();
+        $status = $this->curl->getinfo();
 
         $not_ok_http_codes = ['0'];
         while (in_array($status["http_code"], $not_ok_http_codes) && (--$this->retries > 0)) {
-            $content = $curl->exec();
-            $status = $curl->getinfo();
+            $content = $this->curl->exec();
+            $status = $this->curl->getinfo();
         }
 
-        $headerSize = $curl->getinfo(CURLINFO_HEADER_SIZE);
+        $headerSize = $this->curl->getinfo(CURLINFO_HEADER_SIZE);
         $headers = substr($content, 0, $headerSize);
         $headers = $this->analysisHeaders($headers);
         $body = substr($content, $headerSize);
 
-        if ($curl->errno()) {
-            if ($curl->errno() == CURLE_COULDNT_RESOLVE_HOST || $curl->errno() == CURLE_COULDNT_CONNECT) {
-                throw new NetworkException($request, $curl->error(), $curl->errno());
+        if ($this->curl->errno()) {
+            if ($this->curl->errno() == CURLE_COULDNT_RESOLVE_HOST || $this->curl->errno() == CURLE_COULDNT_CONNECT) {
+                throw new NetworkException($request, $this->curl->error(), $this->curl->errno());
             } else {
-                throw new ClientException($curl->error(), $curl->errno());
+                throw new ClientException($this->curl->error(), $this->curl->errno());
             }
         }
-        $curl->close();
 
-        if (isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] && isset($headers['Location']) && !empty($headers['Location'])) {
+        if (
+            isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] &&
+            isset($headers['Location']) && !empty($headers['Location'])
+        ) {
             if ($headers['Location'] == $url) {
                 return new Response($body, intval($status["http_code"]), $headers);
             }
@@ -125,8 +139,6 @@ class Client implements ClientInterface
             $request = $request->withUri(new Uri($headers['Location']));
             return $this->sendRequest($request);
         }
-
-        $this->reset();
 
         return new Response($body, intval($status["http_code"]), $headers);
     }
@@ -136,21 +148,20 @@ class Client implements ClientInterface
      */
     private function reset()
     {
+        unset($this->curl);
+        $this->curl = new Curl();
+
         //默认配置
         $def_opts = [
             CURLOPT_TIMEOUT           => $this->timeOut,
             CURLOPT_TIMEOUT_MS        => $this->timeOut * 1000,
             CURLOPT_CONNECTTIMEOUT    => $this->timeOut,
             CURLOPT_CONNECTTIMEOUT_MS => $this->timeOut * 1000,
-            CURLOPT_AUTOREFERER       => true, //根据 Location: 重定向时，自动设置 header 中的Referer:信息。
-            CURLOPT_FILETIME          => true, //尝试获取远程文档中的修改时间信息
-            CURLOPT_FOLLOWLOCATION    => true, //根据服务器返回 HTTP 头中的 "Location: " 重定向
-            CURLOPT_SSL_VERIFYPEER    => false, //禁止cURL验证对等证书
-            CURLOPT_SSL_VERIFYHOST    => false, //不检查服务器SSL证书中是否存在一个公用名
-            CURLOPT_SSLVERSION        => 1, //使用CURL_SSLVERSION_TLSv1，在 SSLv2 和 SSLv3 中有弱点存在。
             CURLOPT_HEADER            => true, //返回响应头
             CURLOPT_RETURNTRANSFER    => true, //指定返回结果而不直接输出
         ];
+
+        $this->setOptions($def_opts);
         $this->options = $def_opts;
     }
 
@@ -161,6 +172,7 @@ class Client implements ClientInterface
      */
     public function setOption($key, $value)
     {
+        $this->curl->setopt($key, $value);
         $this->options[$key] = $value;
     }
 
@@ -170,7 +182,8 @@ class Client implements ClientInterface
      */
     public function setOptions(array $options)
     {
-        $this->options = $this->options + $options; //本处由于是数字键名，所以不能使用array_merge
+        $this->curl->setoptArray($options);
+        $this->options = $this->options + $options; // 本处由于是数字键名，所以不能使用array_merge
     }
 
     /**
