@@ -242,7 +242,7 @@ class ClientSimple
      * @param array                                 $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    private static function send($method, $uri, $body = null, array $headers = [], array $opts = [], array $config = [])
+    protected static function send($method, $uri, $body = null, array $headers = [], array $opts = [], array $config = [])
     {
         $cookie_dir = isset($config['cookie_dir']) ? $config['cookie_dir'] : null;
         $time_out = isset($config['time_out']) ? $config['time_out'] : 30;
