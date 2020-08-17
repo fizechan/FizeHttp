@@ -40,9 +40,9 @@ class Client implements ClientInterface
 
     /**
      * 初始化
-     * @param string  $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
-     * @param int     $time_out   设定超时时间,默认30秒
-     * @param integer $retries    curl重试次数
+     * @param string $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
+     * @param int    $time_out   设定超时时间,默认30秒
+     * @param int    $retries    curl重试次数
      */
     public function __construct($cookie_dir = null, $time_out = 30, $retries = 1)
     {
@@ -75,7 +75,7 @@ class Client implements ClientInterface
             throw new RequestException($request);
         }
 
-        $http_version =  CURL_HTTP_VERSION_NONE;
+        $http_version = CURL_HTTP_VERSION_NONE;
         $protocol_version = $request->getProtocolVersion();
         if ($protocol_version == '1.0') {
             $http_version = CURL_HTTP_VERSION_1_0;
@@ -203,7 +203,7 @@ class Client implements ClientInterface
 
     /**
      * 解析响应头成数组
-     * @param $headers string 响应头字符串
+     * @param string $headers 响应头字符串
      * @return array
      */
     private function analysisHeaders($headers)

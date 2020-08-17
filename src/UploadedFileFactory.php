@@ -21,7 +21,13 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * @param string|null     $clientMediaType 文件类型
      * @return UploadedFileInterface
      */
-    public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
+    public function createUploadedFile(
+        StreamInterface $stream,
+        int $size = null,
+        int $error = UPLOAD_ERR_OK,
+        string $clientFilename = null,
+        string $clientMediaType = null
+    ): UploadedFileInterface
     {
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
     }
