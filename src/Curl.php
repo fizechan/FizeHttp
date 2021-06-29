@@ -6,50 +6,34 @@ use CURLFile;
 
 /**
  * CURL
- * @todo 尚有几处未知的参数意义需要补齐
  */
 class Curl
 {
 
     /**
      *
-     * @var string 当前会话链接
-     */
-    private $url = null;
-
-    /**
-     *
      * @var resource 当前会话句柄
      */
-    private $handle;
+    protected $handle;
 
     /**
      * @var array 当前会话设置数组
      */
-    private $opt = [];
-
-    /**
-     * @var bool 当前会话是否可分享
-     */
-    private $share;
-
+    protected $options = [];
 
     /**
      * 构造函数
-     * @param string $url 指定会话链接
-     * @param array $opt 指定选项
-     * @param bool $share 指明是否使用share
+     * @param string|null $url     指定会话链接
+     * @param array       $options 指定选项
      */
-    public function __construct($url = null, array $opt = [], $share = false)
+    public function __construct(string $url = null, array $options = [])
     {
-        $this->share = $share;
         $this->handle = $this->init($url);
         if (!empty($url)) {
-            $this->url = $url;
             $this->setopt(CURLOPT_URL, $url);
         }
-        if (!empty($opt)) {
-            $this->setoptArray($opt);
+        if (!empty($options)) {
+            $this->setoptArray($options);
         }
     }
 
@@ -64,26 +48,13 @@ class Curl
     }
 
     /**
-     * 获取当前会话句柄
-     * @return resource
-     */
-    public function getHandle()
-    {
-        return $this->handle;
-    }
-
-    /**
      * 关闭当前会话
      */
     public function close()
     {
-        if ($this->share) {
-            curl_share_close($this->handle);
-        } else {
-            curl_close($this->handle);
-        }
+        curl_close($this->handle);
         $this->handle = null;
-        $this->opt = [];
+        $this->options = [];
     }
 
     /**
@@ -99,7 +70,7 @@ class Curl
      * 返回最后一次的错误号
      * @return int
      */
-    public function errno()
+    public function errno(): int
     {
         return curl_errno($this->handle);
     }
@@ -108,7 +79,7 @@ class Curl
      * 返回最近一次错误的字符串
      * @return string
      */
-    public function error()
+    public function error(): string
     {
         return curl_error($this->handle);
     }
@@ -116,16 +87,16 @@ class Curl
     /**
      * 使用 URL 编码给定的字符串
      * @param string $str 给定的字符串
-     * @return string
+     * @return string|false
      */
-    public function escape($str)
+    public function escape(string $str)
     {
         return curl_escape($this->handle, $str);
     }
 
     /**
      * 执行当前会话
-     * @return mixed 执行结果，错误返回false
+     * @return string|bool 执行结果，错误返回false
      */
     public function exec()
     {
@@ -139,17 +110,17 @@ class Curl
      * @param string $postname 文件域表单名称
      * @return CURLFile
      */
-    public static function fileCreate($filename, $mimetype, $postname)
+    public static function fileCreate(string $filename, string $mimetype, string $postname): CURLFile
     {
         return curl_file_create($filename, $mimetype, $postname);
     }
 
     /**
      * 获取当前 cURL 连接资源句柄的信息
-     * @param int $opt 参数常量
-     * @return mixed
+     * @param int|null $opt 参数常量
+     * @return array|string
      */
-    public function getinfo($opt = null)
+    public function getinfo(int $opt = null)
     {
         if (is_null($opt)) {
             return curl_getinfo($this->handle);
@@ -160,36 +131,31 @@ class Curl
 
     /**
      * 返回一个 CURL 句柄
-     * @param string $url 指定链接 URL
+     * @param string|null $url 指定链接 URL
      * @return resource
      */
-    public function init($url = null)
+    protected function init(string $url = null)
     {
-        if ($this->share) {
-            return curl_share_init();
-        } else {
-            return curl_init($url);
-        }
+        return curl_init($url);
     }
 
     /**
      * 以新句柄方式设置当前句柄
      * @param resource $handle 要设置的句柄
+     * @deprecated 非 PHP 文档提供功能，后续将删除
      */
-    public function setHandle(&$handle)
+    public function setHandle($handle)
     {
         $this->handle = $handle;
-        $this->opt = []; // 使用此方法则无法获取到已有设置，只能重新设置了。
+        $this->options = []; // 使用此方法则无法获取到已有设置，只能重新设置了。
     }
 
     /**
      * 暂停或解除暂停当前会话
-     *
-     * 官方文档不齐全，不建议使用
-     * @param int $bitmask 参数意义未知
+     * @param int $bitmask CURLPAUSE_*常量之一
      * @return int
      */
-    public function pause($bitmask)
+    public function pause(int $bitmask): int
     {
         return curl_pause($this->handle, $bitmask);
     }
@@ -200,7 +166,7 @@ class Curl
     public function reset()
     {
         curl_reset($this->handle);
-        $this->opt = [];
+        $this->options = [];
     }
 
     /**
@@ -208,30 +174,26 @@ class Curl
      * @param array $options 要设置的选项数组
      * @return bool
      */
-    public function setoptArray($options)
+    public function setoptArray(array $options): bool
     {
         $rst = curl_setopt_array($this->handle, $options);
         if ($rst) {
-            $this->opt = $options + $this->opt; //因为是数字键名，不能使用array_merge
+            $this->options = $options + $this->options; // 因为是数字键名，不能使用array_merge
         }
         return $rst;
     }
 
     /**
      * 为当前传输会话设置选项
-     * @param int $option 需要设置的 CURLOPT_XXX 选项。
-     * @param mixed $value 将设置在 option 选项上的值。
+     * @param int   $option 需要设置的 CURLOPT_XXX 选项。
+     * @param mixed $value  将设置在 option 选项上的值。
      * @return bool
      */
-    public function setopt($option, $value)
+    public function setopt(int $option, $value): bool
     {
-        if ($this->share) {
-            $rst = curl_share_setopt($this->handle, $option, $value);
-        } else {
-            $rst = curl_setopt($this->handle, $option, $value);
-        }
+        $rst = curl_setopt($this->handle, $option, $value);
         if ($rst) {
-            $this->opt[$option] = $value;
+            $this->options[$option] = $value;
         }
         return $rst;
     }
@@ -239,10 +201,11 @@ class Curl
     /**
      * 获取当前会话的所有设置选项
      * @return array
+     * @deprecated 非 PHP 文档提供功能，后续将删除
      */
-    public function getopt()
+    public function getopt(): array
     {
-        return $this->opt;
+        return $this->options;
     }
 
     /**
@@ -250,7 +213,7 @@ class Curl
      * @param int $errornum 返回的错误码
      * @return string
      */
-    public static function strError($errornum)
+    public static function strerror(int $errornum): string
     {
         return curl_strerror($errornum);
     }
@@ -260,18 +223,17 @@ class Curl
      * @param string $str 待解码字符串
      * @return string
      */
-    public function unescape($str)
+    public function unescape(string $str): string
     {
         return curl_unescape($this->handle, $str);
     }
 
     /**
      * 获取 cURL 版本信息
-     * @param int $age 参数意义未知
      * @return array
      */
-    public static function version($age = 3)
+    public static function version(): array
     {
-        return curl_version($age);
+        return curl_version();
     }
 }

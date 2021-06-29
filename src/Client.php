@@ -40,11 +40,11 @@ class Client implements ClientInterface
 
     /**
      * 初始化
-     * @param string $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
-     * @param int    $time_out   设定超时时间,默认30秒
-     * @param int    $retries    curl重试次数
+     * @param string|null $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
+     * @param int         $time_out   设定超时时间,默认30秒
+     * @param int         $retries    curl重试次数
      */
-    public function __construct($cookie_dir = null, $time_out = 30, $retries = 1)
+    public function __construct(string $cookie_dir = null, int $time_out = 30, int $retries = 1)
     {
         $this->cookieFileDir = $cookie_dir;
         $this->timeOut = $time_out;
@@ -64,6 +64,9 @@ class Client implements ClientInterface
      * 发送一个 PSR-7 标准的请求，返回一个 PSR-7 标准的响应
      * @param RequestInterface $request 请求
      * @return ResponseInterface
+     * @throws ClientException
+     * @throws NetworkException
+     * @throws RequestException
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -151,7 +154,7 @@ class Client implements ClientInterface
         unset($this->curl);
         $this->curl = new Curl();
 
-        //默认配置
+        // 默认配置
         $def_opts = [
             CURLOPT_TIMEOUT           => $this->timeOut,
             CURLOPT_TIMEOUT_MS        => $this->timeOut * 1000,
@@ -170,7 +173,7 @@ class Client implements ClientInterface
      * @param int   $key   键名
      * @param mixed $value 键值
      */
-    public function setOption($key, $value)
+    public function setOption(int $key, $value)
     {
         $this->curl->setopt($key, $value);
         $this->options[$key] = $value;
@@ -191,12 +194,12 @@ class Client implements ClientInterface
      * @param RequestInterface $request 请求对象
      * @return array
      */
-    private function getCurlHeaders(RequestInterface $request)
+    private function getCurlHeaders(RequestInterface $request): array
     {
         $headers = $request->getHeaders();
         $curl_headers = [];
         foreach (array_keys($headers) as $key) {
-            $curl_headers[] = "{$key}: {$request->getHeaderLine($key)}";
+            $curl_headers[] = "$key: {$request->getHeaderLine($key)}";
         }
         return $curl_headers;
     }
@@ -206,7 +209,7 @@ class Client implements ClientInterface
      * @param string $headers 响应头字符串
      * @return array
      */
-    private function analysisHeaders($headers)
+    private function analysisHeaders(string $headers): array
     {
         //return iconv_mime_decode_headers($headers);
 

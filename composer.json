@@ -8,24 +8,25 @@
       "email": "chenfengzhan@qq.com"
     }
   ],
-  "require": {
-    "php": ">=7.0.0",
-    "ext-curl": "*",
-    "psr/http-client": "~1.0.0",
-    "psr/http-factory": "~1.0.0",
-    "psr/http-message": "~1.0.0",
-    "psr/http-server-handler": "~1.0.0",
-    "psr/http-server-middleware": "~1.0.0",
-    "fize/io": "~3.7.0",
-    "fize/misc": "~0.1.0",
-    "fize/stream": "~1.0.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "~9.1.0"
-  },
   "autoload": {
     "psr-4": {
       "fize\\http\\": "src"
     }
+  },
+  "require": {
+    "php": ">=7.1.0",
+    "ext-curl": "*",
+    "fize/io": "~4.0.0",
+    "fize/misc": "~0.1.0",
+    "fize/stream": "~1.1.0",
+    "psr/http-client": "~1.0.0",
+    "psr/http-factory": "~1.0.0",
+    "psr/http-message": "~1.0.0",
+    "psr/http-server-handler": "~1.0.0",
+    "psr/http-server-middleware": "~1.0.0"
+  },
+  "require-dev": {
+    "ext-json": "*",
+    "phpunit/phpunit": "~9.5.0"
   }
 }

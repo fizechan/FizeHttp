@@ -30,7 +30,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function get($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function get(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('GET', $uri, null, $headers, $opts, $config);
     }
@@ -47,7 +47,7 @@ class ClientSimple
      * @param array                                 $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function post($uri, $body, array $headers = [], array $opts = [], array $config = [])
+    public static function post(string $uri, $body, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('POST', $uri, $body, $headers, $opts, $config);
     }
@@ -63,7 +63,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function options($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function options(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('OPTIONS', $uri, null, $headers, $opts, $config);
     }
@@ -79,8 +79,12 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function head($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function head(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
+        $def_opts = [
+            CURLOPT_NOBODY => true  // 不返回主体内容，否则会超时。
+        ];
+        $opts = $opts + $def_opts;
         return self::send('HEAD', $uri, null, $headers, $opts, $config);
     }
 
@@ -95,7 +99,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function delete($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function delete(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('DELETE', $uri, null, $headers, $opts, $config);
     }
@@ -111,7 +115,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function patch($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function patch(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('PATCH', $uri, null, $headers, $opts, $config);
     }
@@ -128,7 +132,7 @@ class ClientSimple
      * @param array                                 $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function put($uri, $body = '', array $headers = [], array $opts = [], array $config = [])
+    public static function put(string $uri, $body = '', array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('PUT', $uri, $body, $headers, $opts, $config);
     }
@@ -144,7 +148,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function trace($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function trace(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('TRACE', $uri, null, $headers, $opts, $config);
     }
@@ -160,7 +164,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function move($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function move(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('MOVE', $uri, null, $headers, $opts, $config);
     }
@@ -176,7 +180,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function copy($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function copy(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('COPY', $uri, null, $headers, $opts, $config);
     }
@@ -192,7 +196,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function link($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function link(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('LINK', $uri, null, $headers, $opts, $config);
     }
@@ -208,7 +212,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function unlink($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function unlink(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('UNLINK', $uri, null, $headers, $opts, $config);
     }
@@ -224,7 +228,7 @@ class ClientSimple
      * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function wrapped($uri, array $headers = [], array $opts = [], array $config = [])
+    public static function wrapped(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
         return self::send('WRAPPED', $uri, null, $headers, $opts, $config);
     }
@@ -242,11 +246,11 @@ class ClientSimple
      * @param array                                 $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    protected static function send($method, $uri, $body = null, array $headers = [], array $opts = [], array $config = [])
+    protected static function send(string $method, $uri, $body = null, array $headers = [], array $opts = [], array $config = []): ResponseInterface
     {
-        $cookie_dir = isset($config['cookie_dir']) ? $config['cookie_dir'] : null;
-        $time_out = isset($config['time_out']) ? $config['time_out'] : 30;
-        $retries = isset($config['retries']) ? $config['retries'] : 1;
+        $cookie_dir = $config['cookie_dir'] ?? null;
+        $time_out = $config['time_out'] ?? 30;
+        $retries = $config['retries'] ?? 1;
 
         $client = new Client($cookie_dir, $time_out, $retries);
         if ($opts) {
@@ -278,7 +282,7 @@ class ClientSimple
      * @param mixed $body 请求体
      * @return bool
      */
-    private static function isUploadFile($body)
+    private static function isUploadFile($body): bool
     {
         if (!is_array($body)) {
             return false;

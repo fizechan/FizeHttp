@@ -15,51 +15,58 @@ class TestClient extends TestCase
         self::assertIsObject($client);
     }
 
+    public function test__destruct()
+    {
+        $client = new Client();
+        var_dump($client);
+        self::assertIsObject($client);
+        unset($client);
+    }
+
     public function testSendRequest()
     {
-//        $client = new Client();
-//        $headers = [
-//            'Content-Type' => 'application/x-www-form-urlencoded'
-//        ];
-//        $body = [
-//            'q' => '定制化翻译API语言方向目前只支持中文和英文。',
-//            'from' => 'zh',
-//            'to' => 'en',
-//            'appid' => '20160118000009064',
-//            'salt' => '123456',
-//            'sign' => '9ac0dad8ab7abafc710bf5a9a8516e51'
-//        ];
-//        $body = http_build_query($body);
-//        $request = new Request('POST', 'http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
-//        $response = $client->sendRequest($request);
-//        $body = $response->getBody();
-//        $content = (string)$body;
-//        echo "*****\r\n";
-//        echo $content;
-//        self::assertInstanceOf(Response::class, $response);
-//        return;
-
-        // 测试文件上传
-        $file = 'H:\web\shangyi\www.sygame.loc\src\static\index\bafang\index\image\bg.jpg';
-        $body = [
-            'media' => new CURLFile(realpath($file))
-        ];
-        $access_token = "33_h4CnFEaZMdfriRK_7CY5exWh6Aqpxsa9jO3rLjwn7XjyhDHb7AXGZ6ZFE2Da0kPjyqYAjZZjPFC5yUyhkPmg85bovptWv9rNNZircBs_M7ap_ITpqTdUhcuz95CbXJLrRC2tEt-5clSd71NuLERdADAFYL";
-        $url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$access_token}&type=image";
-        $request = new Request('POST', $url, null, ['Content-type' => 'multipart/form-data']);
         $client = new Client();
-//        $client->setOptions([
-//            CURLOPT_POST => true,
-//        ]);
-        $client->setOption(CURLOPT_POSTFIELDS, $body);  // 值为非标量时使用setOption方法
-
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ];
+        $body = [
+            'q' => '定制化翻译API语言方向目前只支持中文和英文。',
+            'from' => 'zh',
+            'to' => 'en',
+            'appid' => '20160118000009064',
+            'salt' => '123456',
+            'sign' => '9ac0dad8ab7abafc710bf5a9a8516e51'
+        ];
+        $body = http_build_query($body);
+        $request = new Request('POST', 'http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
         $response = $client->sendRequest($request);
-        var_dump($response);
         $body = $response->getBody();
         $content = (string)$body;
         echo "*****\r\n";
         echo $content;
         self::assertInstanceOf(Response::class, $response);
+
+//        // 测试文件上传
+//        $file = 'H:\web\shangyi\www.sygame.loc\src\static\index\bafang\index\image\bg.jpg';
+//        $body = [
+//            'media' => new CURLFile(realpath($file))
+//        ];
+//        $access_token = "33_h4CnFEaZMdfriRK_7CY5exWh6Aqpxsa9jO3rLjwn7XjyhDHb7AXGZ6ZFE2Da0kPjyqYAjZZjPFC5yUyhkPmg85bovptWv9rNNZircBs_M7ap_ITpqTdUhcuz95CbXJLrRC2tEt-5clSd71NuLERdADAFYL";
+//        $url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$access_token}&type=image";
+//        $request = new Request('POST', $url, null, ['Content-type' => 'multipart/form-data']);
+//        $client = new Client();
+////        $client->setOptions([
+////            CURLOPT_POST => true,
+////        ]);
+//        $client->setOption(CURLOPT_POSTFIELDS, $body);  // 值为非标量时使用setOption方法
+//
+//        $response = $client->sendRequest($request);
+//        var_dump($response);
+//        $body = $response->getBody();
+//        $content = (string)$body;
+//        echo "*****\r\n";
+//        echo $content;
+//        self::assertInstanceOf(Response::class, $response);
     }
 
     public function testSetOption()
