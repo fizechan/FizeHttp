@@ -31,7 +31,7 @@ abstract class Message implements MessageInterface
      * 获取 HTTP 协议版本信息
      * @return string
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
@@ -41,7 +41,7 @@ abstract class Message implements MessageInterface
      * @param string $version HTTP 协议版本
      * @return static
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): Message
     {
         $new = clone $this;
         $new->protocolVersion = $version;
@@ -54,7 +54,7 @@ abstract class Message implements MessageInterface
      * 返回的数组中，「键」代表单条报头信息的名字，「值」是以数组形式返回的
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -66,7 +66,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return bool
      */
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         $name = $this->getRealHeaderName($name);
         return !is_null($name);
@@ -79,7 +79,7 @@ abstract class Message implements MessageInterface
      * @param string $name
      * @return string[] 不存在则返回空数组
      */
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         $name = $this->getRealHeaderName($name);
         if (is_null($name)) {
@@ -95,7 +95,7 @@ abstract class Message implements MessageInterface
      * @param string $name
      * @return string
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return implode(', ', $this->getHeader($name));
     }
@@ -108,7 +108,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): Message
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -127,7 +127,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): Message
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -149,7 +149,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutHeader($name)
+    public function withoutHeader($name): Message
     {
         $orig_name = $this->getRealHeaderName($name);
         $new = clone $this;
@@ -166,7 +166,8 @@ abstract class Message implements MessageInterface
     public function getBody()
     {
         if (!$this->stream) {
-            $this->stream = new Stream('php://temp', 'r+');
+            $resource = fopen('php://temp', 'r+');
+            $this->stream = new Stream($resource);
         }
 
         return $this->stream;
@@ -177,7 +178,7 @@ abstract class Message implements MessageInterface
      * @param StreamInterface $body 数据流形式的内容
      * @return static
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): Message
     {
         $new = clone $this;
         $new->stream = $body;
@@ -189,7 +190,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return string|null 不存在该键名则返回 null
      */
-    protected function getRealHeaderName($name)
+    protected function getRealHeaderName(string $name): ?string
     {
         $name = strtolower($name);
         foreach (array_keys($this->headers) as $key) {
@@ -224,7 +225,7 @@ abstract class Message implements MessageInterface
      * @param mixed $value 键值数组或者键值
      * @return array
      */
-    protected function normalizeHeaderValue($value)
+    protected function normalizeHeaderValue($value): array
     {
         if (!is_array($value)) {
             $value = [$value];
@@ -242,7 +243,7 @@ abstract class Message implements MessageInterface
      * @param array $values
      * @return array
      */
-    private function trimHeaderValues(array $values)
+    private function trimHeaderValues(array $values): array
     {
         return array_map(function ($value) {
             if (!is_scalar($value) && null !== $value) {

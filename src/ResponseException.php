@@ -28,7 +28,7 @@ class ResponseException extends RuntimeException
      * 获取响应对象
      * @return Response
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }

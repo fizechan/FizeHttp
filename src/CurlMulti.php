@@ -37,21 +37,22 @@ class CurlMulti
 
     /**
      * 向当前批处理会话中添加一个 CURL 对象作为句柄
-     * @param Curl $ch 要添加进去的CURL对象
+     * @param Curl $ch 要添加进去的CURL对象或者句柄
      * @return int
      */
-    public function addHandle(Curl $ch)
+    public function addHandle(Curl $ch): int
     {
         $this->handles[] = $ch;
-        return curl_multi_add_handle($this->mh, $ch->getHandle());
+        return curl_multi_add_handle($this->mh, $ch->copyHandle());
     }
 
     /**
      * 以数组形式向当前批处理会话中添加多个 CURL 对象作为句柄
      * @param array $chs 元素为CURL对象的数组
      * @return bool
+     * @deprecated 非 PHP 文档提供功能，后续将删除
      */
-    public function addHandles(array $chs)
+    public function addHandles(array $chs): bool
     {
         $no_err = true;
         foreach ($chs as $ch) {
@@ -68,7 +69,7 @@ class CurlMulti
      * 获取当前已添加的单独 CURL 对象句柄
      * @return array
      */
-    public function getHandles()
+    public function getHandles(): array
     {
         return $this->handles;
     }
@@ -86,7 +87,7 @@ class CurlMulti
      * @param int $still_running 一个用来判断操作是否仍在执行的标识的引用。
      * @return int
      */
-    public function exec(&$still_running)
+    public function exec(int &$still_running): int
     {
         return curl_multi_exec($this->mh, $still_running);
     }
@@ -96,17 +97,17 @@ class CurlMulti
      * @param Curl $ch Curl对象，该对象必须执行后才有输出
      * @return string
      */
-    public static function getcontent(Curl $ch)
+    public static function getcontent(Curl $ch): string
     {
-        return curl_multi_getcontent($ch->getHandle());
+        return curl_multi_getcontent($ch->copyHandle());
     }
 
     /**
      * 获取当前解析的 cURL 的相关传输信息
-     * @param int $msgs_in_queue 仍在队列中的消息数量。
+     * @param int|null $msgs_in_queue 仍在队列中的消息数量。
      * @return array
      */
-    public function infoRead(&$msgs_in_queue = null)
+    public function infoRead(int &$msgs_in_queue = null): array
     {
         return curl_multi_info_read($this->mh, $msgs_in_queue);
     }
@@ -125,11 +126,11 @@ class CurlMulti
      *
      * 成功时返回一个cURL句柄，失败时返回 FALSE 。
      * @param Curl $ch 要移除的Curl对象
-     * @return int
+     * @return int|false
      */
-    public function removeHandle(Curl $ch)
+    public function removeHandle(Curl $ch): int
     {
-        return curl_multi_remove_handle($this->mh, $ch->getHandle());
+        return curl_multi_remove_handle($this->mh, $ch->copyHandle());
     }
 
     /**
@@ -138,8 +139,9 @@ class CurlMulti
      * 成功时返回true，失败返回 false
      * @param array $chs 要移除的 Curl 对象组成的数组
      * @return bool
+     * @deprecated 非 PHP 文档提供功能，后续将删除
      */
-    public function removeHandles(array $chs)
+    public function removeHandles(array $chs): bool
     {
         $no_err = true;
         foreach ($chs as $ch) {
@@ -157,7 +159,7 @@ class CurlMulti
      * @param float $timeout 设定超时秒数
      * @return int
      */
-    public function select($timeout = 1.0)
+    public function select(float $timeout = 1.0): int
     {
         return curl_multi_select($this->mh, $timeout);
     }
@@ -168,7 +170,7 @@ class CurlMulti
      * @param mixed $value  将要设置给 option 的值。
      * @return bool
      */
-    public function setopt($option, $value)
+    public function setopt(int $option, $value): bool
     {
         return curl_multi_setopt($this->mh, $option, $value);
     }
@@ -178,7 +180,7 @@ class CurlMulti
      * @param int $errornum 返回的错误码
      * @return string
      */
-    public static function strerror($errornum)
+    public static function strerror(int $errornum): string
     {
         return curl_multi_strerror($errornum);
     }

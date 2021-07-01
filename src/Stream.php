@@ -2,12 +2,12 @@
 
 namespace fize\http;
 
-use fize\stream\Stream as Base;
+use fize\stream\Stream as Common;
 
 /**
  * HTTP 数据流
  */
-class Stream extends Base
+class Stream extends Common
 {
 
 }

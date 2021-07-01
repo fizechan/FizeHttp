@@ -37,7 +37,7 @@ class Request extends Message implements RequestInterface
      * @param array                                $headers          报头信息
      * @param string                               $protocol_version 协议版本
      */
-    public function __construct($method, $uri, $body = null, array $headers = [], $protocol_version = '1.1')
+    public function __construct(string $method, $uri, $body = null, array $headers = [], string $protocol_version = '1.1')
     {
         $this->assertMethod($method);
         if (!($uri instanceof UriInterface)) {
@@ -54,7 +54,8 @@ class Request extends Message implements RequestInterface
         }
 
         if ($body !== '' && $body !== null) {
-            $this->stream = Stream::create($body);
+            $factory = new StreamFactory();
+            $this->stream = $factory->createStream($body);
         }
     }
 
@@ -62,7 +63,7 @@ class Request extends Message implements RequestInterface
      * 获取消息的请求目标
      * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -84,7 +85,7 @@ class Request extends Message implements RequestInterface
      * @param string $requestTarget 请求目标
      * @return self
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): Request
     {
         if (Preg::match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
@@ -99,7 +100,7 @@ class Request extends Message implements RequestInterface
      * 获取当前请求使用的 HTTP 方法
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -109,7 +110,7 @@ class Request extends Message implements RequestInterface
      * @param string $method 请求方法
      * @return self
      */
-    public function withMethod($method)
+    public function withMethod($method): Request
     {
         $this->assertMethod($method);
         $new = clone $this;
@@ -121,7 +122,7 @@ class Request extends Message implements RequestInterface
      * 获取 URI 实例
      * @return UriInterface
      */
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
@@ -132,7 +133,7 @@ class Request extends Message implements RequestInterface
      * @param bool         $preserveHost 是否保持原 HOST 信息
      * @return self
      */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): Request
     {
         $new = clone $this;
         $new->uri = $uri;

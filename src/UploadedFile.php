@@ -68,10 +68,10 @@ class UploadedFile implements UploadedFileInterface
      * @param StreamInterface|string|resource $streamOrFile    文件或数据流
      * @param int                             $size            字节数
      * @param int                             $errorStatus     错误码
-     * @param string                          $clientFilename  文件名称
-     * @param string                          $clientMediaType 文件类型
+     * @param string|null                     $clientFilename  文件名称
+     * @param string|null                     $clientMediaType 文件类型
      */
-    public function __construct($streamOrFile, $size, $errorStatus, $clientFilename = null, $clientMediaType = null)
+    public function __construct($streamOrFile, int $size, int $errorStatus, string $clientFilename = null, string $clientMediaType = null)
     {
         $this->setError($errorStatus);
         $this->setSize($size);
@@ -87,7 +87,7 @@ class UploadedFile implements UploadedFileInterface
      * 判断上传文件是否已移动
      * @return bool
      */
-    public function isMoved()
+    public function isMoved(): bool
     {
         return $this->moved;
     }
@@ -139,7 +139,7 @@ class UploadedFile implements UploadedFileInterface
      * 获取文件大小
      * @return int|null null表示未知
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
@@ -148,7 +148,7 @@ class UploadedFile implements UploadedFileInterface
      * 获取上传文件时出现的错误码
      * @return int
      */
-    public function getError()
+    public function getError(): int
     {
         return $this->error;
     }
@@ -157,7 +157,7 @@ class UploadedFile implements UploadedFileInterface
      * 获取客户端上传的文件的名称
      * @return string|null null表示没有此值
      */
-    public function getClientFilename()
+    public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
@@ -168,7 +168,7 @@ class UploadedFile implements UploadedFileInterface
      * 永远不要信任此方法返回的数据，客户端有可能发送了一个恶意的文件类型名称来攻击你的程序
      * @return string|null null表示没有此值
      */
-    public function getClientMediaType()
+    public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
     }
@@ -178,7 +178,7 @@ class UploadedFile implements UploadedFileInterface
      * @param int $error 错误码
      * @throws InvalidArgumentException
      */
-    private function setError($error)
+    private function setError(int $error)
     {
         if (false === is_int($error)) {
             throw new InvalidArgumentException(
@@ -200,7 +200,7 @@ class UploadedFile implements UploadedFileInterface
      * @param int $size 字节数
      * @throws InvalidArgumentException
      */
-    private function setSize($size)
+    private function setSize(int $size)
     {
         if (false === is_int($size)) {
             throw new InvalidArgumentException(
@@ -216,7 +216,7 @@ class UploadedFile implements UploadedFileInterface
      * @param string|null $clientFilename 文件名称
      * @throws InvalidArgumentException
      */
-    private function setClientFilename($clientFilename)
+    private function setClientFilename(?string $clientFilename)
     {
         if (false === self::isStringOrNull($clientFilename)) {
             throw new InvalidArgumentException(
@@ -231,7 +231,7 @@ class UploadedFile implements UploadedFileInterface
      * 设置客户端提交的文件类型
      * @param string|null $clientMediaType 文件类型
      */
-    private function setClientMediaType($clientMediaType)
+    private function setClientMediaType(?string $clientMediaType)
     {
         if (false === self::isStringOrNull($clientMediaType)) {
             throw new InvalidArgumentException(
@@ -246,7 +246,7 @@ class UploadedFile implements UploadedFileInterface
      * 判断上传是否无错误
      * @return bool
      */
-    private function isOk()
+    private function isOk(): bool
     {
         return $this->error === UPLOAD_ERR_OK;
     }
@@ -289,7 +289,7 @@ class UploadedFile implements UploadedFileInterface
      * @param mixed $param 带判断变量
      * @return bool
      */
-    private static function isStringOrNull($param)
+    private static function isStringOrNull($param): bool
     {
         return in_array(gettype($param), ['string', 'NULL']);
     }
@@ -299,7 +299,7 @@ class UploadedFile implements UploadedFileInterface
      * @param mixed $param 带判断变量
      * @return bool
      */
-    private static function isStringNotEmpty($param)
+    private static function isStringNotEmpty($param): bool
     {
         return is_string($param) && false === empty($param);
     }

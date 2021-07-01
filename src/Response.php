@@ -99,16 +99,16 @@ class Response extends Message implements ResponseInterface
      * @param string                               $protocol_version 协议版本
      * @param string|null                          $reason           状态短语
      */
-    public function __construct($body = null, $status = 200, array $headers = [], $protocol_version = '1.1', $reason = null)
+    public function __construct($body = null, int $status = 200, array $headers = [], string $protocol_version = '1.1', string $reason = null)
     {
         $this->assertStatusCodeIsInteger($status);
-        $status = (int)$status;
         $this->assertStatusCodeRange($status);
 
         $this->statusCode = $status;
 
         if ($body !== '' && $body !== null) {
-            $this->stream = Stream::create($body);
+            $factory = new StreamFactory();
+            $this->stream = $factory->createStream($body);
         }
 
         $this->setHeaders($headers);
@@ -125,7 +125,7 @@ class Response extends Message implements ResponseInterface
      * 获取响应状态码
      * @return int
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -136,7 +136,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase 状态短语
      * @return static
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): Response
     {
         $this->assertStatusCodeIsInteger($code);
         $code = (int)$code;
@@ -155,7 +155,7 @@ class Response extends Message implements ResponseInterface
      * 获取响应状态短语
      * @return string
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }

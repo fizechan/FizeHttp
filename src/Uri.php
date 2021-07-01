@@ -150,13 +150,14 @@ class Uri implements UriInterface
     /**
      * 构造
      * @param string $uri 待解析URI
+     * @throws InvalidArgumentException
      */
-    public function __construct($uri = '')
+    public function __construct(string $uri = '')
     {
         if ($uri != '') {
             $parts = parse_url($uri);
             if ($parts === false) {
-                throw new InvalidArgumentException("Unable to parse URI: {$uri}");
+                throw new InvalidArgumentException("Unable to parse URI: $uri");
             }
             $this->applyParts($parts);
         }
@@ -187,7 +188,7 @@ class Uri implements UriInterface
      * @return string
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
-    public static function composeComponents($scheme, $authority, $path, $query, $fragment)
+    public static function composeComponents(string $scheme, string $authority, string $path, string $query, string $fragment): string
     {
         $uri = '';
 
@@ -216,7 +217,7 @@ class Uri implements UriInterface
      * 返回协议信息
      * @return string
      */
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->scheme;
     }
@@ -225,7 +226,7 @@ class Uri implements UriInterface
      * 返回验证信息
      * @return string
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
         $authority = $this->host;
         if ($this->userInfo !== '') {
@@ -243,7 +244,7 @@ class Uri implements UriInterface
      * 返回用户信息
      * @return string
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         return $this->userInfo;
     }
@@ -252,7 +253,7 @@ class Uri implements UriInterface
      * 返回主机信息
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -261,7 +262,7 @@ class Uri implements UriInterface
      * 返回端口信息
      * @return int|null
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
     }
@@ -270,7 +271,7 @@ class Uri implements UriInterface
      * 返回路径信息
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -279,7 +280,7 @@ class Uri implements UriInterface
      * 返回参数信息
      * @return string
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
@@ -288,7 +289,7 @@ class Uri implements UriInterface
      * 返回锚点信息
      * @return string
      */
-    public function getFragment()
+    public function getFragment(): string
     {
         return $this->fragment;
     }
@@ -298,7 +299,7 @@ class Uri implements UriInterface
      * @param string $scheme 协议
      * @return static
      */
-    public function withScheme($scheme)
+    public function withScheme($scheme): Uri
     {
         $scheme = $this->filterScheme($scheme);
 
@@ -320,7 +321,7 @@ class Uri implements UriInterface
      * @param string|null $password 密码
      * @return static
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): Uri
     {
         $info = $this->filterUserInfoComponent($user);
         if ($password !== null) {
@@ -343,7 +344,7 @@ class Uri implements UriInterface
      * @param string $host 主机
      * @return static
      */
-    public function withHost($host)
+    public function withHost($host): Uri
     {
         $host = $this->filterHost($host);
 
@@ -363,7 +364,7 @@ class Uri implements UriInterface
      * @param int|null $port 端口
      * @return static
      */
-    public function withPort($port)
+    public function withPort($port): Uri
     {
         $port = $this->filterPort($port);
 
@@ -384,7 +385,7 @@ class Uri implements UriInterface
      * @param string $path 路径
      * @return static
      */
-    public function withPath($path)
+    public function withPath($path): Uri
     {
         $path = $this->filterPath($path);
 
@@ -404,7 +405,7 @@ class Uri implements UriInterface
      * @param string $query 参数
      * @return static
      */
-    public function withQuery($query)
+    public function withQuery($query): Uri
     {
         $query = $this->filterQueryAndFragment($query);
 
@@ -423,7 +424,7 @@ class Uri implements UriInterface
      * @param string $fragment 锚点
      * @return static
      */
-    public function withFragment($fragment)
+    public function withFragment($fragment): Uri
     {
         $fragment = $this->filterQueryAndFragment($fragment);
 
@@ -443,7 +444,7 @@ class Uri implements UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4
      */
-    public static function isAbsolute(UriInterface $uri)
+    public static function isAbsolute(UriInterface $uri): bool
     {
         return $uri->getScheme() !== '';
     }
@@ -456,7 +457,7 @@ class Uri implements UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isNetworkPathReference(UriInterface $uri)
+    public static function isNetworkPathReference(UriInterface $uri): bool
     {
         return $uri->getScheme() === '' && $uri->getAuthority() !== '';
     }
@@ -467,7 +468,7 @@ class Uri implements UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.3
      */
-    public static function isAbsolutePathReference(UriInterface $uri)
+    public static function isAbsolutePathReference(UriInterface $uri): bool
     {
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && isset($uri->getPath()[0]) && $uri->getPath()[0] === '/';
     }
@@ -478,7 +479,7 @@ class Uri implements UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isRelativePathReference(UriInterface $uri)
+    public static function isRelativePathReference(UriInterface $uri): bool
     {
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && (!isset($uri->getPath()[0]) || $uri->getPath()[0] !== '/');
     }
@@ -493,11 +494,15 @@ class Uri implements UriInterface
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.4
      */
-    public static function isSameDocumentReference(UriInterface $uri, UriInterface $base = null)
+    public static function isSameDocumentReference(UriInterface $uri, UriInterface $base = null): bool
     {
         if ($base !== null) {
             $uri = self::resolve($base, $uri);
-            return ($uri->getScheme() === $base->getScheme()) && ($uri->getAuthority() === $base->getAuthority()) && ($uri->getPath() === $base->getPath()) && ($uri->getQuery() === $base->getQuery());
+            return
+                ($uri->getScheme() === $base->getScheme()) &&
+                ($uri->getAuthority() === $base->getAuthority()) &&
+                ($uri->getPath() === $base->getPath()) &&
+                ($uri->getQuery() === $base->getQuery());
         }
 
         return $uri->getScheme() === '' && $uri->getAuthority() === '' && $uri->getPath() === '' && $uri->getQuery() === '';
@@ -508,7 +513,7 @@ class Uri implements UriInterface
      * @param UriInterface $uri URI对象
      * @return bool
      */
-    public static function isDefaultPort(UriInterface $uri)
+    public static function isDefaultPort(UriInterface $uri): bool
     {
         $port = $uri->getPort();
         if ($port === null) {
@@ -529,7 +534,7 @@ class Uri implements UriInterface
      * @return string
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
      */
-    public static function removeDotSegments($path)
+    public static function removeDotSegments(string $path): string
     {
         if ($path === '' || $path === '/') {
             return $path;
@@ -566,7 +571,7 @@ class Uri implements UriInterface
      * @param string       $key 键名
      * @return UriInterface
      */
-    public static function withoutQueryValue(UriInterface $uri, $key)
+    public static function withoutQueryValue(UriInterface $uri, string $key): UriInterface
     {
         $result = self::getFilteredQueryString($uri, [$key]);
 
@@ -580,7 +585,7 @@ class Uri implements UriInterface
      * @param string|null  $value 键值
      * @return UriInterface
      */
-    public static function withQueryValue(UriInterface $uri, $key, $value)
+    public static function withQueryValue(UriInterface $uri, string $key, ?string $value): UriInterface
     {
         $result = self::getFilteredQueryString($uri, [$key]);
 
@@ -595,7 +600,7 @@ class Uri implements UriInterface
      * @param array        $keyValueArray 参数键值对
      * @return UriInterface
      */
-    public static function withQueryValues(UriInterface $uri, array $keyValueArray)
+    public static function withQueryValues(UriInterface $uri, array $keyValueArray): UriInterface
     {
         $result = self::getFilteredQueryString($uri, array_keys($keyValueArray));
 
@@ -612,7 +617,7 @@ class Uri implements UriInterface
      * @param array        $keys 键名在该数组内的将不返回
      * @return array 数组项格式为x=y
      */
-    private static function getFilteredQueryString(UriInterface $uri, array $keys)
+    private static function getFilteredQueryString(UriInterface $uri, array $keys): array
     {
         $current = $uri->getQuery();
 
@@ -636,7 +641,7 @@ class Uri implements UriInterface
      * @param string|null $value 键值，为null则不添加
      * @return string
      */
-    private static function generateQueryString($key, $value)
+    private static function generateQueryString(string $key, ?string $value): string
     {
         $queryString = strtr($key, self::$replaceQuery);
 
@@ -652,7 +657,7 @@ class Uri implements UriInterface
      * @param array $parts `parse_url`方法解析出的各部件
      * @return Uri
      */
-    public static function fromParts(array $parts)
+    public static function fromParts(array $parts): Uri
     {
         $uri = new self();
         $uri->applyParts($parts);
@@ -686,7 +691,7 @@ class Uri implements UriInterface
      * @param string $scheme 协议
      * @return string
      */
-    private function filterScheme($scheme)
+    private function filterScheme(string $scheme): string
     {
         if (!is_string($scheme)) {
             throw new InvalidArgumentException('Scheme must be a string');
@@ -700,7 +705,7 @@ class Uri implements UriInterface
      * @param string $component 用户信息
      * @return string
      */
-    private function filterUserInfoComponent($component)
+    private function filterUserInfoComponent(string $component): string
     {
         if (!is_string($component)) {
             throw new InvalidArgumentException('User info must be a string');
@@ -718,7 +723,7 @@ class Uri implements UriInterface
      * @param string $host 主机名
      * @return string
      */
-    private function filterHost($host)
+    private function filterHost(string $host): string
     {
         if (!is_string($host)) {
             throw new InvalidArgumentException('Host must be a string');
@@ -732,7 +737,7 @@ class Uri implements UriInterface
      * @param int|string|null $port 端口
      * @return int|null
      */
-    private function filterPort($port)
+    private function filterPort($port): ?int
     {
         if ($port === null) {
             return null;
@@ -753,7 +758,7 @@ class Uri implements UriInterface
      * @param string $path 路径
      * @return string
      */
-    private function filterPath($path)
+    private function filterPath(string $path): string
     {
         if (!is_string($path)) {
             throw new InvalidArgumentException('Path must be a string');
@@ -771,7 +776,7 @@ class Uri implements UriInterface
      * @param string $str 参数
      * @return string
      */
-    private function filterQueryAndFragment($str)
+    private function filterQueryAndFragment(string $str): string
     {
         if (!is_string($str)) {
             throw new InvalidArgumentException('Query and fragment must be a string');
@@ -799,7 +804,7 @@ class Uri implements UriInterface
      * @param array $match 匹配项
      * @return string
      */
-    private function rawurlencodeMatchZero(array $match)
+    private function rawurlencodeMatchZero(array $match): string
     {
         return rawurlencode($match[0]);
     }
@@ -831,7 +836,7 @@ class Uri implements UriInterface
      * @param int          $flags 选项
      * @return UriInterface
      */
-    public static function normalize(UriInterface $uri, $flags = self::PRESERVING_NORMALIZATIONS)
+    public static function normalize(UriInterface $uri, int $flags = self::PRESERVING_NORMALIZATIONS): UriInterface
     {
         if ($flags & self::CAPITALIZE_PERCENT_ENCODING) {
             $uri = self::capitalizePercentEncoding($uri);
@@ -875,7 +880,7 @@ class Uri implements UriInterface
      * @param UriInterface $uri URI对象
      * @return UriInterface
      */
-    private static function capitalizePercentEncoding(UriInterface $uri)
+    private static function capitalizePercentEncoding(UriInterface $uri): UriInterface
     {
         $regex = '/(?:%[A-Fa-f0-9]{2})++/';
 
@@ -894,7 +899,7 @@ class Uri implements UriInterface
      * @param UriInterface $uri URI对象
      * @return UriInterface
      */
-    private static function decodeUnreservedCharacters(UriInterface $uri)
+    private static function decodeUnreservedCharacters(UriInterface $uri): UriInterface
     {
         $regex = '/%(?:2D|2E|5F|7E|3[0-9]|[46][1-9A-F]|[57][0-9A])/i';
 
@@ -914,7 +919,7 @@ class Uri implements UriInterface
      * @param UriInterface $rel  相对URI
      * @return UriInterface
      */
-    public static function resolve(UriInterface $base, UriInterface $rel)
+    public static function resolve(UriInterface $base, UriInterface $rel): UriInterface
     {
         if ((string)$rel === '') {
             // we can simply return the same base URI instance for this same-document reference
@@ -969,7 +974,7 @@ class Uri implements UriInterface
      * @param UriInterface $target 目标URI
      * @return UriInterface
      */
-    public static function relativize(UriInterface $base, UriInterface $target)
+    public static function relativize(UriInterface $base, UriInterface $target): UriInterface
     {
         if ($target->getScheme() !== '' && ($base->getScheme() !== $target->getScheme() || $target->getAuthority() === '' && $base->getAuthority() !== '')) {
             return $target;
@@ -1018,7 +1023,7 @@ class Uri implements UriInterface
      * @param UriInterface $target 目标URI
      * @return string
      */
-    private static function getRelativePath(UriInterface $base, UriInterface $target)
+    private static function getRelativePath(UriInterface $base, UriInterface $target): string
     {
         $sourceSegments = explode('/', $base->getPath());
         $targetSegments = explode('/', $target->getPath());

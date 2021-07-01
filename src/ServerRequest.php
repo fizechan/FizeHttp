@@ -55,7 +55,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array                                $serverParams     服务器参数，如 $_SERVER
      * @param string                               $protocol_version 协议版本
      */
-    public function __construct($method, $uri, $body = null, array $headers = [], array $serverParams = [], $protocol_version = '1.1')
+    public function __construct(string $method, $uri, $body = null, array $headers = [], array $serverParams = [], string $protocol_version = '1.1')
     {
         $this->serverParams = $serverParams;
         parent::__construct($method, $uri, $body, $headers, $protocol_version);
@@ -65,7 +65,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 返回服务器参数
      * @return array
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->serverParams;
     }
@@ -74,7 +74,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 获取 Cookie 数据
      * @return array
      */
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return $this->cookieParams;
     }
@@ -84,7 +84,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $cookies Cookie数据
      * @return static
      */
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequest
     {
         $new = clone $this;
         $new->cookieParams = $cookies;
@@ -96,7 +96,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 获取查询字符串参数
      * @return array
      */
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->queryParams;
     }
@@ -106,7 +106,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $query 查询字符串参数数组
      * @return static
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequest
     {
         $new = clone $this;
         $new->queryParams = $query;
@@ -118,7 +118,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 获取规范化的上传文件数据
      * @return array
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
@@ -128,7 +128,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $uploadedFiles 指定的上传文件数据
      * @return static
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequest
     {
         $new = clone $this;
         $new->uploadedFiles = $uploadedFiles;
@@ -156,7 +156,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array|object|null $data 反序列化的消息体数据
      * @return static
      */
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequest
     {
         $new = clone $this;
         $new->parsedBody = $data;
@@ -168,7 +168,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 获取从请求派生的属性
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -194,7 +194,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param mixed  $value 键值
      * @return static
      */
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): ServerRequest
     {
         $new = clone $this;
         $new->attributes[$name] = $value;
@@ -207,7 +207,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): ServerRequest
     {
         if (false === array_key_exists($name, $this->attributes)) {
             return $this;
@@ -224,7 +224,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $files 上传文件数组
      * @return array
      */
-    public static function normalizeFiles(array $files)
+    public static function normalizeFiles(array $files): array
     {
         $normalized = [];
 
@@ -235,7 +235,7 @@ class ServerRequest extends Request implements ServerRequestInterface
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
             } elseif (is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
-                continue;
+//                continue;
             } else {
                 throw new InvalidArgumentException('Invalid value in files specification');
             }
@@ -269,7 +269,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $files
      * @return UploadedFile[]
      */
-    private static function normalizeNestedFileSpec(array $files = [])
+    private static function normalizeNestedFileSpec(array $files = []): array
     {
         $normalizedFiles = [];
 
@@ -290,11 +290,10 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * 从全局变量创建ServerRequest对象
      * @return static
-     * @noinspection PhpComposerExtensionStubsInspection
      */
-    public static function fromGlobals()
+    public static function fromGlobals(): ServerRequest
     {
-        $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $headers = getallheaders();
         $uri = self::getUriFromGlobals();
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
@@ -313,7 +312,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * 从全局变量创建URI
      * @return Uri
      */
-    public static function getUriFromGlobals()
+    public static function getUriFromGlobals(): Uri
     {
         $uri = new Uri('');
 
@@ -362,7 +361,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $authority 不严格的URI字符串
      * @return array
      */
-    private static function extractHostAndPortFromAuthority($authority)
+    private static function extractHostAndPortFromAuthority(string $authority): array
     {
         $uri = 'http://' . $authority;
         $parts = parse_url($uri);
@@ -370,8 +369,8 @@ class ServerRequest extends Request implements ServerRequestInterface
             return [null, null];
         }
 
-        $host = isset($parts['host']) ? $parts['host'] : null;
-        $port = isset($parts['port']) ? $parts['port'] : null;
+        $host = $parts['host'] ?? null;
+        $port = $parts['port'] ?? null;
 
         return [$host, $port];
     }
