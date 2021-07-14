@@ -17,11 +17,6 @@ class Curl
     protected $handle;
 
     /**
-     * @var array 当前会话设置数组
-     */
-    protected $options = [];
-
-    /**
      * 构造函数
      * @param string|null $url     指定会话链接
      * @param array       $options 指定选项
@@ -29,7 +24,7 @@ class Curl
     public function __construct(string $url = null, array $options = [])
     {
         $this->handle = $this->init($url);
-        if (!empty($url)) {
+        if (!is_null($url)) {
             $this->setopt(CURLOPT_URL, $url);
         }
         if (!empty($options)) {
@@ -45,6 +40,7 @@ class Curl
         if ($this->handle && get_resource_type($this->handle) == "curl") {
             $this->close();
         }
+        $this->handle = null;
     }
 
     /**
@@ -53,8 +49,6 @@ class Curl
     public function close()
     {
         curl_close($this->handle);
-        $this->handle = null;
-        $this->options = [];
     }
 
     /**
@@ -140,17 +134,6 @@ class Curl
     }
 
     /**
-     * 以新句柄方式设置当前句柄
-     * @param resource $handle 要设置的句柄
-     * @deprecated 非 PHP 文档提供功能，后续将删除
-     */
-    public function setHandle($handle)
-    {
-        $this->handle = $handle;
-        $this->options = []; // 使用此方法则无法获取到已有设置，只能重新设置了。
-    }
-
-    /**
      * 暂停或解除暂停当前会话
      * @param int $bitmask CURLPAUSE_*常量之一
      * @return int
@@ -166,7 +149,6 @@ class Curl
     public function reset()
     {
         curl_reset($this->handle);
-        $this->options = [];
     }
 
     /**
@@ -176,11 +158,7 @@ class Curl
      */
     public function setoptArray(array $options): bool
     {
-        $rst = curl_setopt_array($this->handle, $options);
-        if ($rst) {
-            $this->options = $options + $this->options; // 因为是数字键名，不能使用array_merge
-        }
-        return $rst;
+        return curl_setopt_array($this->handle, $options);
     }
 
     /**
@@ -191,21 +169,7 @@ class Curl
      */
     public function setopt(int $option, $value): bool
     {
-        $rst = curl_setopt($this->handle, $option, $value);
-        if ($rst) {
-            $this->options[$option] = $value;
-        }
-        return $rst;
-    }
-
-    /**
-     * 获取当前会话的所有设置选项
-     * @return array
-     * @deprecated 非 PHP 文档提供功能，后续将删除
-     */
-    public function getopt(): array
-    {
-        return $this->options;
+        return curl_setopt($this->handle, $option, $value);
     }
 
     /**
@@ -235,5 +199,14 @@ class Curl
     public static function version(): array
     {
         return curl_version();
+    }
+
+    /**
+     * 获取原始句柄
+     * @return resource
+     */
+    public function getHandle()
+    {
+        return $this->handle;
     }
 }

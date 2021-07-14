@@ -180,4 +180,11 @@ class TestCurl extends TestCase
         var_dump($version);
         self::assertIsArray($version);
     }
+
+    public function testGetHandle()
+    {
+        $curl = new Curl();
+        $handle = $curl->getHandle();
+        self::assertIsResource($handle);
+    }
 }
