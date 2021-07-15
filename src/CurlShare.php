@@ -5,8 +5,37 @@ namespace fize\http;
 /**
  * 共享 CURL
  */
-class CurlShare extends Curl
+class CurlShare
 {
+
+    /**
+     *
+     * @var resource 当前会话句柄
+     */
+    protected $handle;
+
+    /**
+     * 构造函数
+     * @param array $options 指定选项
+     */
+    public function __construct(array $options = [])
+    {
+        $this->handle = $this->init();
+        foreach ($options as $option => $value) {
+            $this->setopt($option, $value);
+        }
+    }
+
+    /**
+     * 析构函数
+     */
+    public function __destruct()
+    {
+        if ($this->handle && get_resource_type($this->handle) == "curl_share") {
+            $this->close();
+        }
+        $this->handle = null;
+    }
 
     /**
      * 关闭当前会话
@@ -14,8 +43,6 @@ class CurlShare extends Curl
     public function close()
     {
         curl_share_close($this->handle);
-        $this->handle = null;
-        $this->options = [];
     }
 
     /**
@@ -29,10 +56,9 @@ class CurlShare extends Curl
 
     /**
      * 返回一个 CURL 共享句柄
-     * @param string|null $url 指定链接 URL
      * @return resource
      */
-    protected function init(string $url = null)
+    protected function init()
     {
         return curl_share_init();
     }
@@ -45,11 +71,7 @@ class CurlShare extends Curl
      */
     public function setopt(int $option, $value): bool
     {
-        $rst = curl_share_setopt($this->handle, $option, $value);
-        if ($rst) {
-            $this->options[$option] = $value;
-        }
-        return $rst;
+        return curl_share_setopt($this->handle, $option, $value);
     }
 
     /**
@@ -60,5 +82,14 @@ class CurlShare extends Curl
     public static function strerror(int $errornum): string
     {
         return curl_share_strerror($errornum);
+    }
+
+    /**
+     * 获取原始句柄
+     * @return resource
+     */
+    public function getHandle()
+    {
+        return $this->handle;
     }
 }
