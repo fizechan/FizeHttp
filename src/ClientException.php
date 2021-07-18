@@ -2,8 +2,8 @@
 
 namespace fize\http;
 
-use RuntimeException;
 use Psr\Http\Client\ClientExceptionInterface;
+use RuntimeException;
 
 /**
  * 客户端异常

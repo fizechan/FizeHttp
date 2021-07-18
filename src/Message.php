@@ -20,10 +20,10 @@ abstract class Message implements MessageInterface
     /**
      * @var array 报头信息
      */
-    protected $headers;
+    protected $headers = [];
 
     /**
-     * @var Stream|null 数据流
+     * @var Stream 数据流
      */
     protected $stream;
 
@@ -97,7 +97,7 @@ abstract class Message implements MessageInterface
      */
     public function getHeaderLine($name): string
     {
-        return implode(', ', $this->getHeader($name));
+        return implode(',', $this->getHeader($name));
     }
 
     /**
@@ -137,7 +137,10 @@ abstract class Message implements MessageInterface
         if ($orig_name) {
             $orig_value = $this->headers[$orig_name];
             unset($new->headers[$orig_name]);
-            $new->headers[$name] = array_merge($orig_value, $value);
+
+            $arr = array_flip($orig_value) + array_flip($value);
+            $new->headers[$name] = array_keys($arr);
+//            $new->headers[$name] = array_merge($orig_value, $value);
         } else {
             $new->headers[$name] = $value;
         }
@@ -222,7 +225,8 @@ abstract class Message implements MessageInterface
 
     /**
      * 规范化报头键值
-     * @param mixed $value 键值数组或者键值
+     * @param string|string[] $value 键值数组或者键值
+     *
      * @return array
      */
     protected function normalizeHeaderValue($value): array
@@ -263,7 +267,6 @@ abstract class Message implements MessageInterface
      */
     protected function setHeaders(array $headers)
     {
-        $this->headers = [];
         foreach ($headers as $name => $value) {
             if (is_int($name)) {
                 // Numeric array keys are converted to int by PHP but having a header name '123' is not forbidden by the spec

@@ -2,10 +2,10 @@
 
 namespace fize\http;
 
+use fize\io\File;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use fize\io\File;
 
 /**
  * Http 客户端
