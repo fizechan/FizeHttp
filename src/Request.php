@@ -2,11 +2,11 @@
 
 namespace fize\http;
 
+use fize\misc\Preg;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use fize\misc\Preg;
 
 /**
  * HTTP 请求
@@ -15,7 +15,7 @@ class Request extends Message implements RequestInterface
 {
 
     /**
-     * @var string|null 请求目标
+     * @var string 请求目标
      */
     protected $requestTarget;
 
@@ -46,16 +46,24 @@ class Request extends Message implements RequestInterface
 
         $this->method = strtoupper($method);
         $this->uri = $uri;
-        $this->setHeaders($headers);
+        if ($headers) {
+            $this->setHeaders($headers);
+        }
         $this->protocolVersion = $protocol_version;
 
         if (!$this->hasHeader('host')) {
             $this->updateHostFromUri();
         }
 
-        if ($body !== '' && $body !== null) {
+        if (!is_null($body)) {
             $factory = new StreamFactory();
-            $this->stream = $factory->createStream($body);
+            if (is_string($body)) {
+                $this->stream = $factory->createStream($body);
+            } elseif (is_resource($body)) {
+                $this->stream = $factory->createStreamFromResource($body);
+            } elseif ($body instanceof StreamInterface) {
+                $this->stream = $body;
+            }
         }
     }
 
