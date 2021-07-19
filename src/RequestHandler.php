@@ -15,7 +15,7 @@ class RequestHandler implements RequestHandlerInterface
     /**
      * 处理服务器请求并返回响应
      *
-     * 本例只是个范式，无业务逻辑
+     * 本例只是个范式，无实际业务逻辑
      * @param ServerRequestInterface $request 服务端请求
      * @return ResponseInterface
      */
