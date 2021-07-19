@@ -2,9 +2,9 @@
 
 namespace fize\http;
 
-use Throwable;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 /**
  * 请求失败异常
