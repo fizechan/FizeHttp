@@ -1,8 +1,7 @@
 <?php
 
-
-use fize\http\ResponseFactory;
 use fize\http\Response;
+use fize\http\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestResponseFactory extends TestCase
