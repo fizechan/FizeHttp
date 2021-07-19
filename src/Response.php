@@ -106,9 +106,15 @@ class Response extends Message implements ResponseInterface
 
         $this->statusCode = $status;
 
-        if ($body !== '' && $body !== null) {
+        if (!is_null($body)) {
             $factory = new StreamFactory();
-            $this->stream = $factory->createStream($body);
+            if (is_string($body)) {
+                $this->stream = $factory->createStream($body);
+            } elseif (is_resource($body)) {
+                $this->stream = $factory->createStreamFromResource($body);
+            } elseif ($body instanceof StreamInterface) {
+                $this->stream = $body;
+            }
         }
 
         $this->setHeaders($headers);
