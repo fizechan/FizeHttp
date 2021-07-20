@@ -1,10 +1,16 @@
 <?php
 
-
 use fize\http\StreamFactory;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 
 class TestStreamFactory extends TestCase
 {
-    //该类单元测试已在fize\stream\StreamFactory进行
+    public function test()
+    {
+        $factory = new StreamFactory();
+        $st = $factory->createStreamFromFile(__FILE__);
+        var_dump($st);
+        self::assertInstanceOf(StreamInterface::class, $st);
+    }
 }
