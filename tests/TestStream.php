@@ -7,5 +7,10 @@ use PHPUnit\Framework\TestCase;
 class TestStream extends TestCase
 {
 
-    //该类单元测试已在fize\stream\Stream进行
+    public function test()
+    {
+        $st = new Stream(fopen(__FILE__, 'r'));
+        var_dump($st);
+        self::assertInstanceOf(Stream::class, $st);
+    }
 }
