@@ -49,6 +49,10 @@ class TestUri extends TestCase
         $uri = new Uri('https://www.baidu.com:88/test1/test2?wd=搜索一下#t123');
         $authority = $uri->getAuthority();
         self::assertEquals('www.baidu.com:88', $authority);
+        $uri = new Uri('http://username:password@hostname/path?arg=value#anchor');
+        $authority = $uri->getAuthority();
+        var_dump($authority);
+        self::assertEquals('username:password@hostname', $authority);
     }
 
     public function testGetUserInfo()
@@ -161,28 +165,28 @@ class TestUri extends TestCase
     public function testIsAbsolute()
     {
         $uri = new Uri('http://www.baidu.com');
-        $isabs = Uri::isAbsolute($uri);
+        $isabs = $uri->isAbsolute();
         self::assertTrue($isabs);
     }
 
     public function testIsNetworkPathReference()
     {
         $uri = new Uri('//fize:123456@www.baidu.com');
-        $is = Uri::isNetworkPathReference($uri);
+        $is = $uri->isNetworkPathReference();
         self::assertTrue($is);
     }
 
     public function testIsAbsolutePathReference()
     {
         $uri = new Uri('/test');
-        $is = Uri::isAbsolutePathReference($uri);
+        $is = $uri->isAbsolutePathReference();
         self::assertTrue($is);
     }
 
     public function testIsRelativePathReference()
     {
         $uri = new Uri('../test');
-        $is = Uri::isRelativePathReference($uri);
+        $is = $uri->isRelativePathReference();
         self::assertTrue($is);
     }
 
@@ -197,7 +201,7 @@ class TestUri extends TestCase
     public function testIsDefaultPort()
     {
         $uri = new Uri('http://www.baidu.com/test1/test2?kd=123');
-        $is = Uri::isDefaultPort($uri);
+        $is = $uri->isDefaultPort();
         self::assertTrue($is);
     }
 
@@ -209,30 +213,30 @@ class TestUri extends TestCase
         self::assertEquals('/test1/test2', $path);
     }
 
-    public function testWithoutQueryValue()
+    public function testWithoutQueryParam()
     {
         $uri = new Uri('http://www.baidu.com?kw1=str1&kwd2=str2');
-        $uri = Uri::withoutQueryValue($uri, 'kwd2');
+        $uri = $uri->withoutQueryParam('kwd2');
         $uri = (string)$uri;
         self::assertEquals('http://www.baidu.com?kw1=str1', $uri);
     }
 
-    public function testWithQueryValue()
+    public function testWithQueryParam()
     {
         $uri = new Uri('http://www.baidu.com');
-        $uri = Uri::withQueryValue($uri, 'kw1', 'str1');
+        $uri = $uri->withQueryParam('kw1', 'str1');
         $uri = (string)$uri;
         self::assertEquals('http://www.baidu.com?kw1=str1', $uri);
     }
 
-    public function testWithQueryValues()
+    public function testWithQueryParams()
     {
         $QueryValues = [
             'kw1' => 'str1',
             'sk2' => 'st23'
         ];
         $uri = new Uri('http://www.baidu.com');
-        $uri = Uri::withQueryValues($uri, $QueryValues);
+        $uri = $uri->withQueryParams($QueryValues);
         self::assertEquals('http://www.baidu.com?kw1=str1&sk2=st23', $uri);
     }
 
@@ -258,7 +262,7 @@ class TestUri extends TestCase
             'query' => 'kw=哈哈哈'
         ];
         $uri = Uri::fromParts($parts);
-        $uri = Uri::normalize($uri);
+        $uri = $uri->normalize();
         $uri = (string)$uri;
         var_dump($uri);
         self::assertEquals('https://www.baidu.com/test1/test2?kw=' . urlencode('哈哈哈'), $uri);

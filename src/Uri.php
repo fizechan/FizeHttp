@@ -4,7 +4,6 @@ namespace fize\http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
-use fize\misc\Preg;
 
 /**
  * URI 对象
@@ -361,7 +360,7 @@ class Uri implements UriInterface
 
     /**
      * 返回指定端口信息的实例
-     * @param int|null $port 端口
+     * @param int|null $port 端口，null表示不指定使用默认端口
      * @return static
      */
     public function withPort($port): Uri
@@ -440,48 +439,44 @@ class Uri implements UriInterface
 
     /**
      * 判断URI是否完整，即其以协议开始
-     * @param UriInterface $uri URI对象
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4
      */
-    public static function isAbsolute(UriInterface $uri): bool
+    public function isAbsolute(): bool
     {
-        return $uri->getScheme() !== '';
+        return $this->getScheme() !== '';
     }
 
     /**
      * 判断URI是否为网络路径引用
      *
      * 以两个斜杠字符开头的相对引用称为网络路径引用
-     * @param UriInterface $uri URI对象
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isNetworkPathReference(UriInterface $uri): bool
+    public function isNetworkPathReference(): bool
     {
-        return $uri->getScheme() === '' && $uri->getAuthority() !== '';
+        return $this->getScheme() === '' && $this->getAuthority() !== '';
     }
 
     /**
      * 判断URI是否为绝对路径
-     * @param UriInterface $uri URI对象
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.3
      */
-    public static function isAbsolutePathReference(UriInterface $uri): bool
+    public function isAbsolutePathReference(): bool
     {
-        return $uri->getScheme() === '' && $uri->getAuthority() === '' && isset($uri->getPath()[0]) && $uri->getPath()[0] === '/';
+        return $this->getScheme() === '' && $this->getAuthority() === '' && isset($this->getPath()[0]) && $this->getPath()[0] === '/';
     }
 
     /**
      * 判断URI是否为相对路径
-     * @param UriInterface $uri
      * @return bool
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
-    public static function isRelativePathReference(UriInterface $uri): bool
+    public function isRelativePathReference(): bool
     {
-        return $uri->getScheme() === '' && $uri->getAuthority() === '' && (!isset($uri->getPath()[0]) || $uri->getPath()[0] !== '/');
+        return $this->getScheme() === '' && $this->getAuthority() === '' && (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/');
     }
 
     /**
@@ -510,17 +505,16 @@ class Uri implements UriInterface
 
     /**
      * 判断是否使用默认端口
-     * @param UriInterface $uri URI对象
      * @return bool
      */
-    public static function isDefaultPort(UriInterface $uri): bool
+    public function isDefaultPort(): bool
     {
-        $port = $uri->getPort();
+        $port = $this->getPort();
         if ($port === null) {
             return true;
         }
 
-        $scheme = $uri->getScheme();
+        $scheme = $this->getScheme();
         if (isset(self::$defaultPorts[$scheme]) && $port === self::$defaultPorts[$scheme]) {
             return true;
         }
@@ -529,7 +523,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * 从路径中删除点段并返回新路径。
+     * 从路径中删除点段并返回新路径，即标准化路径。
      * @param string $path 路径
      * @return string
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
@@ -567,59 +561,52 @@ class Uri implements UriInterface
 
     /**
      * 移除指定参数
-     * @param UriInterface $uri URI对象
-     * @param string       $key 键名
+     * @param string $key 键名
      * @return UriInterface
      */
-    public static function withoutQueryValue(UriInterface $uri, string $key): UriInterface
+    public function withoutQueryParam(string $key): UriInterface
     {
-        $result = self::getFilteredQueryString($uri, [$key]);
-
-        return $uri->withQuery(implode('&', $result));
+        $result = $this->getFilteredQueryString([$key]);
+        return $this->withQuery(implode('&', $result));
     }
 
     /**
      * 添加指定参数
-     * @param UriInterface $uri   URI对象
-     * @param string       $key   键名
-     * @param string|null  $value 键值
+     * @param string      $key   键名
+     * @param string|null $value 键值
      * @return UriInterface
      */
-    public static function withQueryValue(UriInterface $uri, string $key, ?string $value): UriInterface
+    public function withQueryParam(string $key, ?string $value): UriInterface
     {
-        $result = self::getFilteredQueryString($uri, [$key]);
-
+        $result = $this->getFilteredQueryString([$key]);
         $result[] = self::generateQueryString($key, $value);
-
-        return $uri->withQuery(implode('&', $result));
+        return $this->withQuery(implode('&', $result));
     }
 
     /**
      * 添加多个参数
-     * @param UriInterface $uri           URI对象
      * @param array        $keyValueArray 参数键值对
      * @return UriInterface
      */
-    public static function withQueryValues(UriInterface $uri, array $keyValueArray): UriInterface
+    public function withQueryParams(array $keyValueArray): UriInterface
     {
-        $result = self::getFilteredQueryString($uri, array_keys($keyValueArray));
+        $result = $this->getFilteredQueryString(array_keys($keyValueArray));
 
         foreach ($keyValueArray as $key => $value) {
             $result[] = self::generateQueryString($key, $value);
         }
 
-        return $uri->withQuery(implode('&', $result));
+        return $this->withQuery(implode('&', $result));
     }
 
     /**
      * 获取参数列表
-     * @param UriInterface $uri  URI对象
-     * @param array        $keys 键名在该数组内的将不返回
+     * @param array $keys 键名在该数组内的将不返回
      * @return array 数组项格式为x=y
      */
-    private static function getFilteredQueryString(UriInterface $uri, array $keys): array
+    private function getFilteredQueryString(array $keys): array
     {
-        $current = $uri->getQuery();
+        $current = $this->getQuery();
 
         if ($current === '') {
             return [];
@@ -710,11 +697,14 @@ class Uri implements UriInterface
         if (!is_string($component)) {
             throw new InvalidArgumentException('User info must be a string');
         }
-
+        $callback = function (array $match) {
+            return rawurlencode($match[0]);
+        };
         return preg_replace_callback(
-            '/(?:[^%' . self::$charUnreserved . self::$charSubDelims . ']+|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'rawurlencodeMatchZero'],
-            $component
+            '/([^%' . self::$charUnreserved . self::$charSubDelims . ']+|%(?![A-Fa-f0-9]{2}))/',
+            $callback,
+            $component,
+            1
         );
     }
 
@@ -728,7 +718,6 @@ class Uri implements UriInterface
         if (!is_string($host)) {
             throw new InvalidArgumentException('Host must be a string');
         }
-
         return strtolower($host);
     }
 
@@ -763,11 +752,14 @@ class Uri implements UriInterface
         if (!is_string($path)) {
             throw new InvalidArgumentException('Path must be a string');
         }
-
+        $callback = function (array $match) {
+            return rawurlencode($match[0]);
+        };
         return preg_replace_callback(
-            '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'rawurlencodeMatchZero'],
-            $path
+            '/([^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
+            $callback,
+            $path,
+            1
         );
     }
 
@@ -781,11 +773,14 @@ class Uri implements UriInterface
         if (!is_string($str)) {
             throw new InvalidArgumentException('Query and fragment must be a string');
         }
-
+        $callback = function (array $match) {
+            return rawurlencode($match[0]);
+        };
         return preg_replace_callback(
-            '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'rawurlencodeMatchZero'],
-            $str
+            '/([^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+            $callback,
+            $str,
+            1
         );
     }
 
@@ -794,19 +789,9 @@ class Uri implements UriInterface
      */
     private function removeDefaultPort()
     {
-        if ($this->port !== null && self::isDefaultPort($this)) {
+        if ($this->port !== null && $this->isDefaultPort()) {
             $this->port = null;
         }
-    }
-
-    /**
-     * 对第一个匹配项进行rawurlencode
-     * @param array $match 匹配项
-     * @return string
-     */
-    private function rawurlencodeMatchZero(array $match): string
-    {
-        return rawurlencode($match[0]);
     }
 
     /**
@@ -832,18 +817,18 @@ class Uri implements UriInterface
 
     /**
      * 标准化URI
-     * @param UriInterface $uri   URI对象
      * @param int          $flags 选项
      * @return UriInterface
      */
-    public static function normalize(UriInterface $uri, int $flags = self::PRESERVING_NORMALIZATIONS): UriInterface
+    public function normalize(int $flags = self::PRESERVING_NORMALIZATIONS): UriInterface
     {
+        $uri = clone $this;
         if ($flags & self::CAPITALIZE_PERCENT_ENCODING) {
-            $uri = self::capitalizePercentEncoding($uri);
+            $uri = $uri->capitalizePercentEncoding();
         }
 
         if ($flags & self::DECODE_UNRESERVED_CHARACTERS) {
-            $uri = self::decodeUnreservedCharacters($uri);
+            $uri = $uri->decodeUnreservedCharacters();
         }
 
         if ($flags & self::CONVERT_EMPTY_PATH && $uri->getPath() === '' && ($uri->getScheme() === 'http' || $uri->getScheme() === 'https')) {
@@ -854,16 +839,16 @@ class Uri implements UriInterface
             $uri = $uri->withHost('');
         }
 
-        if ($flags & self::REMOVE_DEFAULT_PORT && $uri->getPort() !== null && self::isDefaultPort($uri)) {
+        if ($flags & self::REMOVE_DEFAULT_PORT && $uri->getPort() !== null && $uri->isDefaultPort()) {
             $uri = $uri->withPort(null);
         }
 
-        if ($flags & self::REMOVE_DOT_SEGMENTS && !self::isRelativePathReference($uri)) {
+        if ($flags & self::REMOVE_DOT_SEGMENTS && !$uri->isRelativePathReference()) {
             $uri = $uri->withPath(self::removeDotSegments($uri->getPath()));
         }
 
         if ($flags & self::REMOVE_DUPLICATE_SLASHES) {
-            $uri = $uri->withPath(Preg::replace('#//++#', '/', $uri->getPath()));
+            $uri = $uri->withPath(preg_replace('#//++#', '/', $uri->getPath()));
         }
 
         if ($flags & self::SORT_QUERY_PARAMETERS && $uri->getQuery() !== '') {
@@ -877,10 +862,9 @@ class Uri implements UriInterface
 
     /**
      * 一个百分比编码的三连音中的所有字母(例如“%3A”)是不区分大小写的，应大写
-     * @param UriInterface $uri URI对象
      * @return UriInterface
      */
-    private static function capitalizePercentEncoding(UriInterface $uri): UriInterface
+    private function capitalizePercentEncoding(): UriInterface
     {
         $regex = '/(?:%[A-Fa-f0-9]{2})++/';
 
@@ -889,17 +873,16 @@ class Uri implements UriInterface
         };
 
         return
-            $uri
-                ->withPath(Preg::replaceCallback($regex, $callback, $uri->getPath()))
-                ->withQuery(Preg::replaceCallback($regex, $callback, $uri->getQuery()));
+            $this
+                ->withPath(preg_replace_callback($regex, $callback, $this->getPath()))
+                ->withQuery(preg_replace_callback($regex, $callback, $this->getQuery()));
     }
 
     /**
      * 解码未保留字符的百分比编码字节。
-     * @param UriInterface $uri URI对象
      * @return UriInterface
      */
-    private static function decodeUnreservedCharacters(UriInterface $uri): UriInterface
+    private function decodeUnreservedCharacters(): UriInterface
     {
         $regex = '/%(?:2D|2E|5F|7E|3[0-9]|[46][1-9A-F]|[57][0-9A])/i';
 
@@ -908,9 +891,9 @@ class Uri implements UriInterface
         };
 
         return
-            $uri
-                ->withPath(Preg::replaceCallback($regex, $callback, $uri->getPath()))
-                ->withQuery(Preg::replaceCallback($regex, $callback, $uri->getQuery()));
+            $this
+                ->withPath(preg_replace_callback($regex, $callback, $this->getPath()))
+                ->withQuery(preg_replace_callback($regex, $callback, $this->getQuery()));
     }
 
     /**
@@ -980,7 +963,7 @@ class Uri implements UriInterface
             return $target;
         }
 
-        if (self::isRelativePathReference($target)) {
+        if ($target->isRelativePathReference()) {
             // As the target is already highly relative we return it as-is. It would be possible to resolve
             // the target with `$target = self::resolve($base, $target);` and then try make it more relative
             // by removing a duplicate query. But let's not do that automatically.

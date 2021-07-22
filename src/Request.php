@@ -2,7 +2,6 @@
 
 namespace fize\http;
 
-use fize\misc\Preg;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -95,7 +94,7 @@ class Request extends Message implements RequestInterface
      */
     public function withRequestTarget($requestTarget): Request
     {
-        if (Preg::match('#\s#', $requestTarget)) {
+        if (preg_match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
