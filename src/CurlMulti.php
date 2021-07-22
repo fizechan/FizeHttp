@@ -25,9 +25,10 @@ class CurlMulti
      */
     public function __destruct()
     {
-        if ($this->mh && get_resource_type($this->mh) == "curl_multi") {
+        if ($this->mh) {
             $this->close();
         }
+        $this->mh = null;
     }
 
     /**

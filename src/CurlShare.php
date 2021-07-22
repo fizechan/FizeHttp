@@ -31,7 +31,7 @@ class CurlShare
      */
     public function __destruct()
     {
-        if ($this->handle && get_resource_type($this->handle) == "curl_share") {
+        if ($this->handle) {
             $this->close();
         }
         $this->handle = null;
