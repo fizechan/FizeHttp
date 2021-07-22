@@ -1,8 +1,7 @@
 <?php
 
-
-use fize\http\UriFactory;
 use fize\http\Uri;
+use fize\http\UriFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestUriFactory extends TestCase
