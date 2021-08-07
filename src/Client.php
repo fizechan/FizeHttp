@@ -104,7 +104,7 @@ class Client implements ClientInterface
             $this->setOptions($pls_opts);
         }
 
-        $body = (string)$request->getBody();
+        $body = $request->getBody()->getContents();
         if ($body) {
             $this->setOption(CURLOPT_POSTFIELDS, $body);
         }
