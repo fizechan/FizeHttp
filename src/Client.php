@@ -93,13 +93,13 @@ class Client implements ClientInterface
         $this->setOption(CURLOPT_CUSTOMREQUEST, $request->getMethod());
         $this->setOption(CURLOPT_HTTPHEADER, $this->getCurlHeaders($request));
 
-        if (!is_null($this->cookieFileDir)) {  //COOKIE全程跟踪
+        if (!is_null($this->cookieFileDir)) {  // COOKIE全程跟踪
             $cookie_file = $this->cookieFileDir . "{$request->getUri()->getHost()}.cookie";
-            new File($cookie_file, 'w'); //自动创建文件
+            new File($cookie_file, 'w'); // 自动创建文件
 
             $pls_opts = [
-                CURLOPT_COOKIEJAR  => $cookie_file, //调用后保存cookie的文件
-                CURLOPT_COOKIEFILE => $cookie_file, //要一起传送的cookie的文件
+                CURLOPT_COOKIEJAR  => $cookie_file, // 调用后保存cookie的文件
+                CURLOPT_COOKIEFILE => $cookie_file, // 要一起传送的cookie的文件
             ];
             $this->setOptions($pls_opts);
         }
@@ -160,8 +160,8 @@ class Client implements ClientInterface
             CURLOPT_TIMEOUT_MS        => $this->timeOut * 1000,
             CURLOPT_CONNECTTIMEOUT    => $this->timeOut,
             CURLOPT_CONNECTTIMEOUT_MS => $this->timeOut * 1000,
-            CURLOPT_HEADER            => true, //返回响应头
-            CURLOPT_RETURNTRANSFER    => true, //指定返回结果而不直接输出
+            CURLOPT_HEADER            => true, // 返回响应头
+            CURLOPT_RETURNTRANSFER    => true, // 指定返回结果而不直接输出
         ];
 
         $this->setOptions($def_opts);
@@ -211,7 +211,7 @@ class Client implements ClientInterface
      */
     private function analysisHeaders(string $headers): array
     {
-        //return iconv_mime_decode_headers($headers);
+//        return iconv_mime_decode_headers($headers);
 
         $arr_out = [];
         $headers = explode("\r\n", $headers);

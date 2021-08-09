@@ -4,7 +4,6 @@ namespace fize\http;
 
 use CURLFile;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -40,11 +39,11 @@ class ClientSimple
      *
      * 参数 `$config` :
      *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
-     * @param string                                $uri     指定链接
-     * @param string|resource|StreamInterface|array $body    请求体
-     * @param array                                 $headers 设定请求头设置
-     * @param array                                 $opts    参数配置数组
-     * @param array                                 $config  客户端配置
+     * @param string       $uri     指定链接
+     * @param string|array $body    请求体
+     * @param array        $headers 设定请求头设置
+     * @param array        $opts    参数配置数组
+     * @param array        $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
     public static function post(string $uri, $body, array $headers = [], array $opts = [], array $config = []): ResponseInterface
@@ -125,11 +124,11 @@ class ClientSimple
      *
      * 参数 `$config` :
      *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
-     * @param string                                $uri     指定链接
-     * @param string|resource|StreamInterface|array $body    请求体
-     * @param array                                 $headers 设定请求头设置
-     * @param array                                 $opts    参数配置数组
-     * @param array                                 $config  客户端配置
+     * @param string       $uri     指定链接
+     * @param string|array $body    请求体
+     * @param array        $headers 设定请求头设置
+     * @param array        $opts    参数配置数组
+     * @param array        $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
     public static function put(string $uri, $body = '', array $headers = [], array $opts = [], array $config = []): ResponseInterface
@@ -238,12 +237,12 @@ class ClientSimple
      *
      * 参数 `$config` :
      *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
-     * @param string                                $method  请求方式
-     * @param string|UriInterface                   $uri     请求URI
-     * @param string|resource|StreamInterface|array $body    请求体
-     * @param array                                 $headers 报头信息
-     * @param array                                 $opts    CURL选项
-     * @param array                                 $config  客户端配置
+     * @param string              $method  请求方式
+     * @param string|UriInterface $uri     请求URI
+     * @param string|array        $body    请求体
+     * @param array               $headers 报头信息
+     * @param array               $opts    CURL选项
+     * @param array               $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
     protected static function send(string $method, $uri, $body = null, array $headers = [], array $opts = [], array $config = []): ResponseInterface
