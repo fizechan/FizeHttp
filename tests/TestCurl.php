@@ -17,6 +17,7 @@ class TestCurl extends TestCase
     {
         $curl = new Curl();
         var_export($curl);
+        $curl->close();
         self::assertIsObject($curl);
         unset($curl);
     }

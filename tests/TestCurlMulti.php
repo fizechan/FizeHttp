@@ -17,6 +17,7 @@ class TestCurlMulti extends TestCase
     {
         $cm = new CurlMulti();
         var_dump($cm);
+        $cm->close();
         self::assertIsObject($cm);
         unset($cm);
     }

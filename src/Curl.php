@@ -37,7 +37,7 @@ class Curl
      */
     public function __destruct()
     {
-        if ($this->handle) {
+        if ($this->handle && get_resource_type($this->handle) == 'curl') {
             $this->close();
         }
         $this->handle = null;
