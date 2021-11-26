@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
-use fize\stream\StreamFactory as Common;
+use Fize\Stream\StreamFactory as Common;
 
 /**
  * HTTP 数据流工厂类

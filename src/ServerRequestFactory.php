@@ -1,9 +1,9 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
-use fize\stream\protocol\CachingStream;
-use fize\stream\protocol\LazyOpenStream;
+use Fize\Stream\Protocol\CachingStream;
+use Fize\Stream\Protocol\LazyOpenStream;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;

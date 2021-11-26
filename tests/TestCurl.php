@@ -1,6 +1,9 @@
 <?php
 
-use fize\http\Curl;
+namespace Tests;
+
+use CURLFile;
+use Fize\Http\Curl;
 use PHPUnit\Framework\TestCase;
 
 class TestCurl extends TestCase

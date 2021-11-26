@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
-use fize\io\File;
+use Fize\IO\File;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

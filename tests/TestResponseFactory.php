@@ -1,7 +1,9 @@
 <?php
 
-use fize\http\Response;
-use fize\http\ResponseFactory;
+namespace Tests;
+
+use Fize\Http\Response;
+use Fize\Http\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestResponseFactory extends TestCase

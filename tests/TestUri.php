@@ -1,7 +1,8 @@
 <?php
 
+namespace Tests;
 
-use fize\http\Uri;
+use Fize\Http\Uri;
 use PHPUnit\Framework\TestCase;
 
 class TestUri extends TestCase

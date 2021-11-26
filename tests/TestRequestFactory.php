@@ -1,7 +1,9 @@
 <?php
 
-use fize\http\Request;
-use fize\http\RequestFactory;
+namespace Tests;
+
+use Fize\Http\Request;
+use Fize\Http\RequestFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestRequestFactory extends TestCase

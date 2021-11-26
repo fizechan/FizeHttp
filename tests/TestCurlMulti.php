@@ -1,6 +1,8 @@
 <?php
 
-use fize\http\CurlMulti;
+namespace Tests;
+
+use Fize\Http\CurlMulti;
 use PHPUnit\Framework\TestCase;
 
 class TestCurlMulti extends TestCase

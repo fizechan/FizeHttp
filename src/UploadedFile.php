@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
-use fize\stream\protocol\LazyOpenStream;
+use Fize\Stream\Protocol\LazyOpenStream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;

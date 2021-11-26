@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;

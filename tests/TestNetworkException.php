@@ -1,8 +1,9 @@
 <?php
 
+namespace Tests;
 
-use fize\http\NetworkException;
-use fize\http\Request;
+use Fize\Http\NetworkException;
+use Fize\Http\Request;
 use PHPUnit\Framework\TestCase;
 
 class TestNetworkException extends TestCase

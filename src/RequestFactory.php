@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;

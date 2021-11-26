@@ -1,6 +1,8 @@
 <?php
 
-use fize\http\StreamFactory;
+namespace Tests;
+
+use Fize\Http\StreamFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 

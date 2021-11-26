@@ -1,8 +1,10 @@
 <?php
 
-use fize\http\Client;
-use fize\http\ClientException;
-use fize\http\Request;
+namespace Tests;
+
+use Fize\Http\Client;
+use Fize\Http\ClientException;
+use Fize\Http\Request;
 use PHPUnit\Framework\TestCase;
 
 class TestClientException extends TestCase

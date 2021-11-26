@@ -1,8 +1,9 @@
 <?php
 
+namespace Tests;
 
-use fize\http\Request;
-use fize\http\RequestException;
+use Fize\Http\Request;
+use Fize\Http\RequestException;
 use PHPUnit\Framework\TestCase;
 
 class TestRequestException extends TestCase

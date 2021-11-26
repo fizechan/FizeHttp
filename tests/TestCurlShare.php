@@ -1,6 +1,8 @@
 <?php
 
-use fize\http\CurlShare;
+namespace Tests;
+
+use Fize\Http\CurlShare;
 use PHPUnit\Framework\TestCase;
 
 class TestCurlShare extends TestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
-use fize\stream\Stream as Common;
+use Fize\Stream\Stream as Common;
 
 /**
  * HTTP 数据流

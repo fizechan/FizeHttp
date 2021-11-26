@@ -1,7 +1,9 @@
 <?php
 
-use fize\http\StreamFactory;
-use fize\http\UploadedFileFactory;
+namespace Tests;
+
+use Fize\Http\StreamFactory;
+use Fize\Http\UploadedFileFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
 

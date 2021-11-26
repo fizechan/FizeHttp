@@ -1,9 +1,10 @@
 <?php
 
+namespace Tests;
 
-use fize\http\RequestHandler;
-use fize\http\Response;
-use fize\http\ServerRequest;
+use Fize\Http\RequestHandler;
+use Fize\Http\Response;
+use Fize\Http\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

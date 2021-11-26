@@ -1,7 +1,8 @@
 <?php
 
+namespace Tests;
 
-use fize\http\ClientSimple;
+use Fize\Http\ClientSimple;
 use PHPUnit\Framework\TestCase;
 
 class TestClientSimple extends TestCase

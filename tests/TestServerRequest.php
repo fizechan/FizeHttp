@@ -1,8 +1,10 @@
 <?php
 
-use fize\http\ServerRequest;
-use fize\http\Stream;
-use fize\http\UploadedFile;
+namespace Tests;
+
+use Fize\Http\ServerRequest;
+use Fize\Http\Stream;
+use Fize\Http\UploadedFile;
 use PHPUnit\Framework\TestCase;
 
 class TestServerRequest extends TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\http;
+namespace Fize\Http;
 
 /**
  * 多进程 CURL

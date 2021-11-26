@@ -1,8 +1,10 @@
 <?php
 
-use fize\http\Client;
-use fize\http\Request;
-use fize\http\Response;
+namespace Tests;
+
+use Fize\Http\Client;
+use Fize\Http\Request;
+use Fize\Http\Response;
 use PHPUnit\Framework\TestCase;
 
 class TestClient extends TestCase
