@@ -680,10 +680,6 @@ class Uri implements UriInterface
      */
     private function filterScheme(string $scheme): string
     {
-        if (!is_string($scheme)) {
-            throw new InvalidArgumentException('Scheme must be a string');
-        }
-
         return strtolower($scheme);
     }
 
@@ -694,9 +690,6 @@ class Uri implements UriInterface
      */
     private function filterUserInfoComponent(string $component): string
     {
-        if (!is_string($component)) {
-            throw new InvalidArgumentException('User info must be a string');
-        }
         $callback = function (array $match) {
             return rawurlencode($match[0]);
         };
@@ -715,9 +708,6 @@ class Uri implements UriInterface
      */
     private function filterHost(string $host): string
     {
-        if (!is_string($host)) {
-            throw new InvalidArgumentException('Host must be a string');
-        }
         return strtolower($host);
     }
 
@@ -749,9 +739,6 @@ class Uri implements UriInterface
      */
     private function filterPath(string $path): string
     {
-        if (!is_string($path)) {
-            throw new InvalidArgumentException('Path must be a string');
-        }
         $callback = function (array $match) {
             return rawurlencode($match[0]);
         };
@@ -770,9 +757,6 @@ class Uri implements UriInterface
      */
     private function filterQueryAndFragment(string $str): string
     {
-        if (!is_string($str)) {
-            throw new InvalidArgumentException('Query and fragment must be a string');
-        }
         $callback = function (array $match) {
             return rawurlencode($match[0]);
         };

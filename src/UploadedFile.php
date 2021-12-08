@@ -188,12 +188,6 @@ class UploadedFile implements UploadedFileInterface
      */
     private function setError(int $error)
     {
-        if (false === is_int($error)) {
-            throw new InvalidArgumentException(
-                'Upload file error status must be an integer'
-            );
-        }
-
         if (false === in_array($error, self::$errors)) {
             throw new InvalidArgumentException(
                 'Invalid error status for UploadedFile'
@@ -210,12 +204,6 @@ class UploadedFile implements UploadedFileInterface
      */
     private function setSize(int $size)
     {
-        if (false === is_int($size)) {
-            throw new InvalidArgumentException(
-                'Upload file size must be an integer'
-            );
-        }
-
         $this->size = $size;
     }
 
