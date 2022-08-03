@@ -8,6 +8,7 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Http 简易客户端
+ * @todo 改成非静态调用。
  */
 class ClientSimple
 {
