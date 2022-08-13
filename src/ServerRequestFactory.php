@@ -50,6 +50,17 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     }
 
     /**
+     * 设置服务端请求全局变量
+     * @param ServerRequestInterface $request 服务端请求
+     */
+    public function setGlobals(ServerRequestInterface $request)
+    {
+        $_SERVER = $request->getServerParams();
+        $_SERVER['REQUEST_METHOD'] = $request->getMethod();
+        $_SERVER['SERVER_PROTOCOL'] = $request->getProtocolVersion();
+    }
+
+    /**
      * 从全局变量创建URI
      * @return Uri
      */
