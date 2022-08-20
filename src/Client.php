@@ -112,16 +112,16 @@ class Client implements ClientInterface
         $content = $this->curl->exec();
         $status = $this->curl->getinfo();
 
-        $not_ok_http_codes = ['0'];
-        while (in_array($status["http_code"], $not_ok_http_codes) && (--$this->retries > 0)) {
+        $bad_codes = ['0'];
+        while (in_array($status['http_code'], $bad_codes) && (--$this->retries > 0)) {
             $content = $this->curl->exec();
             $status = $this->curl->getinfo();
         }
 
-        $headerSize = $this->curl->getinfo(CURLINFO_HEADER_SIZE);
-        $headers = substr($content, 0, $headerSize);
+        $header_size = $this->curl->getinfo(CURLINFO_HEADER_SIZE);
+        $headers = substr($content, 0, $header_size);
         $headers = $this->analysisHeaders($headers);
-        $body = substr($content, $headerSize);
+        $body = substr($content, $header_size);
 
         if ($this->curl->errno()) {
             if ($this->curl->errno() == CURLE_COULDNT_RESOLVE_HOST || $this->curl->errno() == CURLE_COULDNT_CONNECT) {
@@ -136,14 +136,14 @@ class Client implements ClientInterface
             isset($headers['Location']) && !empty($headers['Location'])
         ) {
             if ($headers['Location'] == $url) {
-                return new Response($body, intval($status["http_code"]), $headers);
+                return new Response($body, intval($status['http_code']), $headers);
             }
 
             $request = $request->withUri(new Uri($headers['Location']));
             return $this->sendRequest($request);
         }
 
-        return new Response($body, intval($status["http_code"]), $headers);
+        return new Response($body, intval($status['http_code']), $headers);
     }
 
     /**
@@ -212,11 +212,10 @@ class Client implements ClientInterface
     private function analysisHeaders(string $headers): array
     {
 //        return iconv_mime_decode_headers($headers);
-
         $arr_out = [];
         $headers = explode("\r\n", $headers);
         foreach ($headers as $header) {
-            $items = explode(": ", $header, 2);
+            $items = explode(': ', $header, 2);
             if (count($items) != 2) {
                 continue;
             }

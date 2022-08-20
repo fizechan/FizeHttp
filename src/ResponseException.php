@@ -22,7 +22,7 @@ class ResponseException extends RuntimeException
      * @param string         $message  错误信息
      * @param int            $code     错误码
      */
-    public function __construct(Response $response, Throwable $previous = null, string $message = "", int $code = 0)
+    public function __construct(Response $response, Throwable $previous = null, string $message = '', int $code = 0)
     {
         $this->response = $response;
         parent::__construct($message, $code, $previous);

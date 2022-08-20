@@ -14,56 +14,56 @@ class Uri implements UriInterface
     /**
      * 默认的规范化，只包括保留语义的规范化
      */
-    const PRESERVING_NORMALIZATIONS = 63;
+    public const PRESERVING_NORMALIZATIONS = 63;
 
     /**
      * 一个百分比编码的三连音中的所有字母(例如“%3A”)是不区分大小写的，应该大写。
      *
      * 例如: http://example.org/a%c2%b1b → http://example.org/a%C2%B1b
      */
-    const CAPITALIZE_PERCENT_ENCODING = 1;
+    public const CAPITALIZE_PERCENT_ENCODING = 1;
 
     /**
      * 解码未保留字符的百分比编码字节。
      *
      * 例如: http://example.org/%7Eusern%61me/ → http://example.org/~username/
      */
-    const DECODE_UNRESERVED_CHARACTERS = 2;
+    public const DECODE_UNRESERVED_CHARACTERS = 2;
 
     /**
      * 将http和https uri的空路径转换为“/”。
      *
      * 例如: http://example.org → http://example.org/
      */
-    const CONVERT_EMPTY_PATH = 4;
+    public const CONVERT_EMPTY_PATH = 4;
 
     /**
      * 从URI中删除给定URI方案的默认主机。
      *
      * 例如: file://localhost/myfile → file:///myfile
      */
-    const REMOVE_DEFAULT_HOST = 8;
+    public const REMOVE_DEFAULT_HOST = 8;
 
     /**
      * 从URI中删除给定URI方案的默认端口。
      *
      * 例如: http://example.org:80/ → http://example.org/
      */
-    const REMOVE_DEFAULT_PORT = 16;
+    public const REMOVE_DEFAULT_PORT = 16;
 
     /**
      * 移除不必要的相对路径
      *
      * 例如: http://example.org/../a/b/../c/./d.html → http://example.org/a/c/d.html
      */
-    const REMOVE_DOT_SEGMENTS = 32;
+    public const REMOVE_DOT_SEGMENTS = 32;
 
     /**
      * 包含两个或多个相邻斜杠的路径被转换为一个斜杠。
      *
      * 例如: http://example.org//foo///bar.html → http://example.org/foo/bar.html
      */
-    const REMOVE_DUPLICATE_SLASHES = 64;
+    public const REMOVE_DUPLICATE_SLASHES = 64;
 
     /**
      * 将查询参数及其值按字母顺序排序。
@@ -72,12 +72,12 @@ class Uri implements UriInterface
      *
      * 例如: ?lang=en&article=fred → ?article=fred&lang=en
      */
-    const SORT_QUERY_PARAMETERS = 128;
+    public const SORT_QUERY_PARAMETERS = 128;
 
     /**
      * 默认主机名
      */
-    const HTTP_DEFAULT_HOST = 'localhost';
+    public const HTTP_DEFAULT_HOST = 'localhost';
 
     /**
      * @var array 默认端口
@@ -545,18 +545,16 @@ class Uri implements UriInterface
             }
         }
 
-        $newPath = implode('/', $results);
-
-        if ($path[0] === '/' && (!isset($newPath[0]) || $newPath[0] !== '/')) {
+        $new_path = implode('/', $results);
+        if ($path[0] === '/' && (!isset($new_path[0]) || $new_path[0] !== '/')) {
             // Re-add the leading slash if necessary for cases like "/.."
-            $newPath = '/' . $newPath;
-        } elseif ($newPath !== '' && ($segment === '.' || $segment === '..')) {
+            $new_path = '/' . $new_path;
+        } elseif ($new_path !== '' && ($segment === '.' || $segment === '..')) {
             // Add the trailing slash if necessary
             // If newPath is not empty, then $segment must be set and is the last segment from the foreach
-            $newPath .= '/';
+            $new_path .= '/';
         }
-
-        return $newPath;
+        return $new_path;
     }
 
     /**
@@ -585,7 +583,7 @@ class Uri implements UriInterface
 
     /**
      * 添加多个参数
-     * @param array        $keyValueArray 参数键值对
+     * @param array $keyValueArray 参数键值对
      * @return UriInterface
      */
     public function withQueryParams(array $keyValueArray): UriInterface
@@ -612,12 +610,11 @@ class Uri implements UriInterface
             return [];
         }
 
-        $decodedKeys = array_map('rawurldecode', $keys);
-
+        $decoded_keys = array_map('rawurldecode', $keys);
         return array_filter(
             explode('&', $current),
-            function ($part) use ($decodedKeys) {
-                return !in_array(rawurldecode(explode('=', $part)[0]), $decodedKeys, true);
+            function ($part) use ($decoded_keys) {
+                return !in_array(rawurldecode(explode('=', $part)[0]), $decoded_keys, true);
             }
         );
     }
@@ -630,13 +627,11 @@ class Uri implements UriInterface
      */
     private static function generateQueryString(string $key, ?string $value): string
     {
-        $queryString = strtr($key, self::$replaceQuery);
-
+        $query_string = strtr($key, self::$replaceQuery);
         if ($value !== null) {
-            $queryString .= '=' . strtr($value, self::$replaceQuery);
+            $query_string .= '=' . strtr($value, self::$replaceQuery);
         }
-
-        return $queryString;
+        return $query_string;
     }
 
     /**
@@ -801,7 +796,7 @@ class Uri implements UriInterface
 
     /**
      * 标准化URI
-     * @param int          $flags 选项
+     * @param int $flags 选项
      * @return UriInterface
      */
     public function normalize(int $flags = self::PRESERVING_NORMALIZATIONS): UriInterface
@@ -836,9 +831,9 @@ class Uri implements UriInterface
         }
 
         if ($flags & self::SORT_QUERY_PARAMETERS && $uri->getQuery() !== '') {
-            $queryKeyValues = explode('&', $uri->getQuery());
-            sort($queryKeyValues);
-            $uri = $uri->withQuery(implode('&', $queryKeyValues));
+            $query_key_values = explode('&', $uri->getQuery());
+            sort($query_key_values);
+            $uri = $uri->withQuery(implode('&', $query_key_values));
         }
 
         return $uri;
@@ -898,39 +893,39 @@ class Uri implements UriInterface
         }
 
         if ($rel->getAuthority() != '') {
-            $targetAuthority = $rel->getAuthority();
-            $targetPath = self::removeDotSegments($rel->getPath());
-            $targetQuery = $rel->getQuery();
+            $target_authority = $rel->getAuthority();
+            $target_path = self::removeDotSegments($rel->getPath());
+            $target_query = $rel->getQuery();
         } else {
-            $targetAuthority = $base->getAuthority();
+            $target_authority = $base->getAuthority();
             if ($rel->getPath() === '') {
-                $targetPath = $base->getPath();
-                $targetQuery = $rel->getQuery() != '' ? $rel->getQuery() : $base->getQuery();
+                $target_path = $base->getPath();
+                $target_query = $rel->getQuery() != '' ? $rel->getQuery() : $base->getQuery();
             } else {
                 if ($rel->getPath()[0] === '/') {
-                    $targetPath = $rel->getPath();
+                    $target_path = $rel->getPath();
                 } else {
-                    if ($targetAuthority != '' && $base->getPath() === '') {
-                        $targetPath = '/' . $rel->getPath();
+                    if ($target_authority != '' && $base->getPath() === '') {
+                        $target_path = '/' . $rel->getPath();
                     } else {
-                        $lastSlashPos = strrpos($base->getPath(), '/');
-                        if ($lastSlashPos === false) {
-                            $targetPath = $rel->getPath();
+                        $last_slash_pos = strrpos($base->getPath(), '/');
+                        if ($last_slash_pos === false) {
+                            $target_path = $rel->getPath();
                         } else {
-                            $targetPath = substr($base->getPath(), 0, $lastSlashPos + 1) . $rel->getPath();
+                            $target_path = substr($base->getPath(), 0, $last_slash_pos + 1) . $rel->getPath();
                         }
                     }
                 }
-                $targetPath = self::removeDotSegments($targetPath);
-                $targetQuery = $rel->getQuery();
+                $target_path = self::removeDotSegments($target_path);
+                $target_query = $rel->getQuery();
             }
         }
 
         return new static(self::composeComponents(
             $base->getScheme(),
-            $targetAuthority,
-            $targetPath,
-            $targetQuery,
+            $target_authority,
+            $target_path,
+            $target_query,
             $rel->getFragment()
         ));
     }
@@ -961,27 +956,26 @@ class Uri implements UriInterface
         // We must remove the path before removing the authority because if the path starts with two slashes, the URI
         // would turn invalid. And we also cannot set a relative path before removing the authority, as that is also
         // invalid.
-        $emptyPathUri = $target->withScheme('')->withPath('')->withUserInfo('')->withPort(null)->withHost('');
+        $empty_path_uri = $target->withScheme('')->withPath('')->withUserInfo('')->withPort(null)->withHost('');
 
         if ($base->getPath() !== $target->getPath()) {
-            return $emptyPathUri->withPath(self::getRelativePath($base, $target));
+            return $empty_path_uri->withPath(self::getRelativePath($base, $target));
         }
 
         if ($base->getQuery() === $target->getQuery()) {
             // Only the target fragment is left. And it must be returned even if base and target fragment are the same.
-            return $emptyPathUri->withQuery('');
+            return $empty_path_uri->withQuery('');
         }
 
         // If the base URI has a query but the target has none, we cannot return an empty path reference as it would
         // inherit the base query component when resolving.
         if ($target->getQuery() === '') {
             $segments = explode('/', $target->getPath());
-            $lastSegment = end($segments);
-
-            return $emptyPathUri->withPath($lastSegment === '' ? './' : $lastSegment);
+            $last_segment = end($segments);
+            return $empty_path_uri->withPath($last_segment === '' ? './' : $last_segment);
         }
 
-        return $emptyPathUri;
+        return $empty_path_uri;
     }
 
     /**
@@ -992,34 +986,34 @@ class Uri implements UriInterface
      */
     private static function getRelativePath(UriInterface $base, UriInterface $target): string
     {
-        $sourceSegments = explode('/', $base->getPath());
-        $targetSegments = explode('/', $target->getPath());
-        array_pop($sourceSegments);
-        $targetLastSegment = array_pop($targetSegments);
-        foreach ($sourceSegments as $i => $segment) {
-            if (isset($targetSegments[$i]) && $segment === $targetSegments[$i]) {
-                unset($sourceSegments[$i], $targetSegments[$i]);
+        $source_segments = explode('/', $base->getPath());
+        $target_segments = explode('/', $target->getPath());
+        array_pop($source_segments);
+        $tglast_segment = array_pop($target_segments);
+        foreach ($source_segments as $i => $segment) {
+            if (isset($target_segments[$i]) && $segment === $target_segments[$i]) {
+                unset($source_segments[$i], $target_segments[$i]);
             } else {
                 break;
             }
         }
-        $targetSegments[] = $targetLastSegment;
-        $relativePath = str_repeat('../', count($sourceSegments)) . implode('/', $targetSegments);
+        $target_segments[] = $tglast_segment;
+        $relative_path = str_repeat('../', count($source_segments)) . implode('/', $target_segments);
 
         // A reference to am empty last segment or an empty first sub-segment must be prefixed with "./".
         // This also applies to a segment with a colon character (e.g., "file:colon") that cannot be used
         // as the first segment of a relative-path reference, as it would be mistaken for a scheme name.
-        if ('' === $relativePath || false !== strpos(explode('/', $relativePath, 2)[0], ':')) {
-            $relativePath = "./$relativePath";
-        } elseif ('/' === $relativePath[0]) {
+        if ('' === $relative_path || false !== strpos(explode('/', $relative_path, 2)[0], ':')) {
+            $relative_path = "./$relative_path";
+        } elseif ('/' === $relative_path[0]) {
             if ($base->getAuthority() != '' && $base->getPath() === '') {
                 // In this case an extra slash is added by resolve() automatically. So we must not add one here.
-                $relativePath = ".$relativePath";
+                $relative_path = ".$relative_path";
             } else {
-                $relativePath = "./$relativePath";
+                $relative_path = "./$relative_path";
             }
         }
 
-        return $relativePath;
+        return $relative_path;
     }
 }

@@ -40,9 +40,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
 
-        $serverRequest = new ServerRequest($method, $uri, $body, $headers, $_SERVER, $protocol);
-
-        return $serverRequest
+        $server_request = new ServerRequest($method, $uri, $body, $headers, $_SERVER, $protocol);
+        return $server_request
             ->withCookieParams($_COOKIE)
             ->withQueryParams($_GET)
             ->withParsedBody($_POST)
@@ -70,15 +69,15 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
 
         $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
 
-        $hasPort = false;
+        $has_port = false;
         if (isset($_SERVER['HTTP_HOST'])) {
-            [$host, $port] = self::extractHostAndPortFromAuthority($_SERVER['HTTP_HOST']);
+            [$host, $port] = self::extractHostAndPort($_SERVER['HTTP_HOST']);
             if ($host !== null) {
                 $uri = $uri->withHost($host);
             }
 
             if ($port !== null) {
-                $hasPort = true;
+                $has_port = true;
                 $uri = $uri->withPort($port);
             }
         } elseif (isset($_SERVER['SERVER_NAME'])) {
@@ -87,21 +86,21 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = $uri->withHost($_SERVER['SERVER_ADDR']);
         }
 
-        if (!$hasPort && isset($_SERVER['SERVER_PORT'])) {
+        if (!$has_port && isset($_SERVER['SERVER_PORT'])) {
             $uri = $uri->withPort($_SERVER['SERVER_PORT']);
         }
 
-        $hasQuery = false;
+        $has_query = false;
         if (isset($_SERVER['REQUEST_URI'])) {
-            $requestUriParts = explode('?', $_SERVER['REQUEST_URI'], 2);
-            $uri = $uri->withPath($requestUriParts[0]);
-            if (isset($requestUriParts[1])) {
-                $hasQuery = true;
-                $uri = $uri->withQuery($requestUriParts[1]);
+            $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+            $uri = $uri->withPath($uri_parts[0]);
+            if (isset($uri_parts[1])) {
+                $has_query = true;
+                $uri = $uri->withQuery($uri_parts[1]);
             }
         }
 
-        if (!$hasQuery && isset($_SERVER['QUERY_STRING'])) {
+        if (!$has_query && isset($_SERVER['QUERY_STRING'])) {
             $uri = $uri->withQuery($_SERVER['QUERY_STRING']);
         }
 
@@ -113,7 +112,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param string $authority 不严格的URI字符串
      * @return array [主机, 端口]
      */
-    private static function extractHostAndPortFromAuthority(string $authority): array
+    private static function extractHostAndPort(string $authority): array
     {
         $uri = 'https://' . $authority;
         $parts = parse_url($uri);
@@ -179,7 +178,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     private static function normalizeNestedFileSpec(array $files = []): array
     {
-        $normalizedFiles = [];
+        $normalized_files = [];
 
         foreach (array_keys($files['tmp_name']) as $key) {
             $spec = [
@@ -189,9 +188,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
                 'name'     => $files['name'][$key],
                 'type'     => $files['type'][$key],
             ];
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+            $normalized_files[$key] = self::createUploadedFileFromSpec($spec);
         }
 
-        return $normalizedFiles;
+        return $normalized_files;
     }
 }

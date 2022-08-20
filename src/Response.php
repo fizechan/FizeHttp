@@ -147,13 +147,13 @@ class Response extends Message implements ResponseInterface
         $this->assertStatusCodeIsInteger($code);
         $code = (int)$code;
         $this->assertStatusCodeRange($code);
-
+        $reason_phrase = $reasonPhrase;
         $new = clone $this;
         $new->statusCode = $code;
-        if ($reasonPhrase == '' && isset(self::$phrases[$new->statusCode])) {
-            $reasonPhrase = self::$phrases[$new->statusCode];
+        if ($reason_phrase == '' && isset(self::$phrases[$new->statusCode])) {
+            $reason_phrase = self::$phrases[$new->statusCode];
         }
-        $new->reasonPhrase = $reasonPhrase;
+        $new->reasonPhrase = $reason_phrase;
         return $new;
     }
 

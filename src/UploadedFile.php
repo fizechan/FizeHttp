@@ -2,6 +2,7 @@
 
 namespace Fize\Http;
 
+use Fize\IO\File;
 use Fize\Stream\Protocol\LazyOpenStream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -76,15 +77,17 @@ class UploadedFile implements UploadedFileInterface
         $this->setError($errorStatus);
         $this->setSize($size);
 
-        if (is_string($streamOrFile) && is_null($clientFilename)) {
-            $clientFilename = basename($streamOrFile);
+        $client_filename = $clientFilename;
+        if (is_string($streamOrFile) && is_null($client_filename)) {
+            $client_filename = basename($streamOrFile);
         }
-        $this->setClientFilename($clientFilename);
+        $this->setClientFilename($client_filename);
 
-        if (is_string($streamOrFile) && is_null($clientMediaType)) {
-            $clientMediaType = self::getMimeType($streamOrFile);
+        $client_mime = $clientMediaType;
+        if (is_string($streamOrFile) && is_null($client_mime)) {
+            $client_mime = (new File($streamOrFile))->getMime();
         }
-        $this->setClientMediaType($clientMediaType);
+        $this->setClientMediaType($client_mime);
 
         if ($this->isOk()) {
             $this->setStreamOrFile($streamOrFile);
@@ -298,70 +301,5 @@ class UploadedFile implements UploadedFileInterface
     private static function isStringNotEmpty($param): bool
     {
         return is_string($param) && false === empty($param);
-    }
-
-    /**
-     * 返回文件MIME
-     * @param string $file_path 文件路径
-     * @return string
-     */
-    private static function getMimeType(string $file_path): string
-    {
-        $mime_types = [  // 常见MIME
-            'ai'   => 'application/postscript',
-            'bmp'  => 'image/bmp',
-            'cab'  => 'application/vnd.ms-cab-compressed',
-            'css'  => 'text/css',
-            'eps'  => 'application/postscript',
-            'exe'  => 'application/x-msdownload',
-            'doc'  => 'application/msword',
-            'flv'  => 'video/x-flv',
-            'gif'  => 'image/gif',
-            'htm'  => 'text/html',
-            'html' => 'text/html',
-            'ico'  => 'image/vnd.microsoft.icon',
-            'jpe'  => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'jpg'  => 'image/jpeg',
-            'js'   => 'application/javascript',
-            'json' => 'application/json',
-            'mov'  => 'video/quicktime',
-            'mp3'  => 'audio/mpeg',
-            'msi'  => 'application/x-msdownload',
-            'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
-            'odt'  => 'application/vnd.oasis.opendocument.text',
-            'pdf'  => 'application/pdf',
-            'php'  => 'text/html',
-            'png'  => 'image/png',
-            'ppt'  => 'application/vnd.ms-powerpoint',
-            'ps'   => 'application/postscript',
-            'psd'  => 'image/vnd.adobe.photoshop',
-            'qt'   => 'video/quicktime',
-            'rar'  => 'application/x-rar-compressed',
-            'rtf'  => 'application/rtf',
-            'svg'  => 'image/svg+xml',
-            'svgz' => 'image/svg+xml',
-            'swf'  => 'application/x-shockwave-flash',
-            'tif'  => 'image/tiff',
-            'tiff' => 'image/tiff',
-            'txt'  => 'text/plain',
-            'xls'  => 'application/vnd.ms-excel',
-            'xml'  => 'application/xml',
-            'zip'  => 'application/zip',
-        ];
-        $temp = explode('.', $file_path);
-        $ext = strtolower(array_pop($temp));
-        if (array_key_exists($ext, $mime_types)) {
-            return $mime_types[$ext];
-        } elseif (extension_loaded('fileinfo')) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mimetype = finfo_file($finfo, $file_path);
-            finfo_close($finfo);
-            return $mimetype;
-        } elseif (function_exists('mime_content_type')) {
-            return mime_content_type($file_path);
-        } else {
-            return 'application/octet-stream';
-        }
     }
 }

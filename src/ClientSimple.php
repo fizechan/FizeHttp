@@ -257,16 +257,16 @@ class ClientSimple
             $client->setOptions($opts);
         }
 
-        $dataPOST = null;
+        $data_post = null;
         if (is_string($body)) {
-            $dataPOST = $body;
+            $data_post = $body;
         } elseif (self::isUploadFile($body)) {
-            $dataPOST = $body;  // 需要POST上传文件时直接传递数组
+            $data_post = $body;  // 需要POST上传文件时直接传递数组
         } elseif (!empty($body)) {
-            $dataPOST = http_build_query($body);
+            $data_post = http_build_query($body);
         }
-        if (!is_null($dataPOST)) {
-            $client->setOption(CURLOPT_POSTFIELDS, $dataPOST);
+        if (!is_null($data_post)) {
+            $client->setOption(CURLOPT_POSTFIELDS, $data_post);
         }
 
         if (is_array($body)) {

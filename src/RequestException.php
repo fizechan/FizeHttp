@@ -24,7 +24,7 @@ class RequestException extends ClientException implements RequestExceptionInterf
      * @param int              $code     错误码
      * @param Throwable|null   $previous 用于异常链接
      */
-    public function __construct(RequestInterface $request, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(RequestInterface $request, $message = '', $code = 0, Throwable $previous = null)
     {
         $this->request = $request;
         parent::__construct($message, $code, $previous);
