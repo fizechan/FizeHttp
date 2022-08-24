@@ -50,13 +50,20 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
 
     /**
      * 设置服务端请求全局变量
+     *
+     * 本方法主要应用在HTTP的单元测试中。
      * @param ServerRequestInterface $request 服务端请求
      */
     public function setGlobals(ServerRequestInterface $request)
     {
+        global $_SERVER, $_COOKIE, $_GET, $_POST, $_FILES;
         $_SERVER = $request->getServerParams();
         $_SERVER['REQUEST_METHOD'] = $request->getMethod();
         $_SERVER['SERVER_PROTOCOL'] = $request->getProtocolVersion();
+        $_COOKIE = $request->getCookieParams();
+        $_GET = $request->getQueryParams();
+        $_POST = $request->getParsedBody();
+        $_FILES = $request->getUploadedFiles();
     }
 
     /**
