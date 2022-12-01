@@ -7,274 +7,216 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Http 简易客户端
- * @todo 改成非静态调用。
+ * HTTP简易客户端
  */
 class ClientSimple
 {
+
     /**
-     * 禁止实例化
+     * @var string 主机名
      */
-    private function __construct()
+    protected $host;
+
+    /**
+     * @var Client HTTP客户端
+     */
+    protected $client;
+
+    /**
+     * 初始化
+     * @param string      $host       主机名
+     * @param string|null $cookie_dir 指定保存COOKIE文件的路径，默认null表示不使用COOKIE
+     * @param int         $time_out   设定超时时间,默认30秒
+     * @param int         $retries    curl重试次数
+     * @param array       $opts       CURL选项
+     */
+    public function __construct(string $host, string $cookie_dir = null, int $time_out = 30, int $retries = 1, array $opts = [])
     {
+        $this->host = $host;
+        $this->client = new Client($cookie_dir, $time_out, $retries);
+        if ($opts) {
+            $this->client->setOptions($opts);
+        }
     }
 
     /**
      * GET 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 附加的文件头
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function get(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function get(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('GET', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('GET', $uri, null, $headers);
     }
 
     /**
      * POST 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string       $uri     指定链接
      * @param string|array $body    请求体
      * @param array        $headers 设定请求头设置
-     * @param array        $opts    参数配置数组
-     * @param array        $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function post(string $uri, $body, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function post(string $uri, $body, array $headers = []): ResponseInterface
     {
-        return self::send('POST', $uri, $body, $headers, $opts, $config);
+        return $this->sendRequest('POST', $uri, $body, $headers);
     }
 
     /**
      * OPTIONS 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function options(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function options(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('OPTIONS', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('OPTIONS', $uri, null, $headers);
     }
 
     /**
      * HEAD 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function head(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function head(string $uri, array $headers = []): ResponseInterface
     {
-        $def_opts = [
+        $opts = [
             CURLOPT_NOBODY => true  // 不返回主体内容，否则会超时。
         ];
-        $opts = $opts + $def_opts;
-        return self::send('HEAD', $uri, null, $headers, $opts, $config);
+        $this->client->setOptions($opts);
+        return $this->sendRequest('HEAD', $uri, null, $headers);
     }
 
     /**
      * DELETE 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function delete(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function delete(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('DELETE', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('DELETE', $uri, null, $headers);
     }
 
     /**
      * PATCH 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function patch(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function patch(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('PATCH', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('PATCH', $uri, null, $headers);
     }
 
     /**
      * PUT 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string       $uri     指定链接
      * @param string|array $body    请求体
      * @param array        $headers 设定请求头设置
-     * @param array        $opts    参数配置数组
-     * @param array        $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function put(string $uri, $body = '', array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function put(string $uri, $body = '', array $headers = []): ResponseInterface
     {
-        return self::send('PUT', $uri, $body, $headers, $opts, $config);
+        return $this->sendRequest('PUT', $uri, $body, $headers);
     }
 
     /**
      * TRACE 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function trace(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function trace(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('TRACE', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('TRACE', $uri, null, $headers);
     }
 
     /**
      * MOVE 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function move(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function move(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('MOVE', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('MOVE', $uri, null, $headers);
     }
 
     /**
      * COPY 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function copy(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function copy(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('COPY', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('COPY', $uri, null, $headers);
     }
 
     /**
      * LINK 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function link(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function link(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('LINK', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('LINK', $uri, null, $headers);
     }
 
     /**
      * UNLINK 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function unlink(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function unlink(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('UNLINK', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('UNLINK', $uri, null, $headers);
     }
 
     /**
      * WRAPPED 请求
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
      * @param string $uri     指定链接
      * @param array  $headers 设定请求头设置
-     * @param array  $opts    参数配置数组
-     * @param array  $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    public static function wrapped(string $uri, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    public function wrapped(string $uri, array $headers = []): ResponseInterface
     {
-        return self::send('WRAPPED', $uri, null, $headers, $opts, $config);
+        return $this->sendRequest('WRAPPED', $uri, null, $headers);
     }
 
     /**
-     * 简易 HTTP 客户端
-     *
-     * 参数 `$config` :
-     *   ['cookie_dir' => *, 'time_out' => *, 'retries' => *]
+     * 发送HTTP请求
      * @param string              $method  请求方式
      * @param string|UriInterface $uri     请求URI
      * @param string|array        $body    请求体
      * @param array               $headers 报头信息
-     * @param array               $opts    CURL选项
-     * @param array               $config  客户端配置
      * @return ResponseInterface 返回响应对象
      */
-    protected static function send(string $method, $uri, $body = null, array $headers = [], array $opts = [], array $config = []): ResponseInterface
+    protected function sendRequest(string $method, $uri, $body = null, array $headers = []): ResponseInterface
     {
-        $cookie_dir = $config['cookie_dir'] ?? null;
-        $time_out = $config['time_out'] ?? 30;
-        $retries = $config['retries'] ?? 1;
-
-        $client = new Client($cookie_dir, $time_out, $retries);
-        if ($opts) {
-            $client->setOptions($opts);
-        }
-
-        $data_post = null;
+        $url = $this->host . $uri;
+        $data = null;
         if (is_string($body)) {
-            $data_post = $body;
+            $data = $body;
         } elseif (self::isUploadFile($body)) {
-            $data_post = $body;  // 需要POST上传文件时直接传递数组
+            $data = $body;  // 需要POST上传文件时直接传递数组
         } elseif (!empty($body)) {
-            $data_post = http_build_query($body);
+            $data = http_build_query($body);
         }
-        if (!is_null($data_post)) {
-            $client->setOption(CURLOPT_POSTFIELDS, $data_post);
+        if (!is_null($data)) {
+            $this->client->setOption(CURLOPT_POSTFIELDS, $data);
         }
 
         if (is_array($body)) {
             $body = null;  // 使用CURL直接传递body
         }
 
-        $request = new Request($method, $uri, $body, $headers);
-        return $client->sendRequest($request);
+        $request = new Request($method, $url, $body, $headers);
+        return $this->client->sendRequest($request);
     }
 
     /**

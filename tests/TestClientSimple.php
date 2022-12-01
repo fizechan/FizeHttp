@@ -10,13 +10,15 @@ class TestClientSimple extends TestCase
 
     public function testGet()
     {
-        $response = ClientSimple::get('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->get('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testPost()
     {
+        $client = new ClientSimple('http://api.fanyi.baidu.com');
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
@@ -29,91 +31,102 @@ class TestClientSimple extends TestCase
             'sign' => '9ac0dad8ab7abafc710bf5a9a8516e51'
         ];
         $body = http_build_query($body);
-        $response = ClientSimple::post('http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
+        $response = $client->post('/api/trans/vip/translate', $body, $headers);
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testOptions()
     {
-        $response = ClientSimple::options('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->options('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testHead()
     {
+        $client = new ClientSimple('https://www.baidu.com');
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
-        $response = ClientSimple::head('https://www.baidu.com', $headers);
+        $response = $client->head('', $headers);
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testDelete()
     {
-        $response = ClientSimple::delete('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->delete('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testPatch()
     {
-        $response = ClientSimple::patch('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->patch('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testPut()
     {
+        $client = new ClientSimple('http://api.fanyi.baidu.com');
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
         $body = '{"q":"定制化翻译API语言方向目前只支持中文和英文。","from":"zh","to":"en","appid":"20160118000009064","salt":"123456","sign":"9ac0dad8ab7abafc710bf5a9a8516e51"}';
-        $response = ClientSimple::put('http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
+        $response = $client->put('/api/trans/vip/translate', $body, $headers);
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testTrace()
     {
-        $response = ClientSimple::trace('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->trace('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testMove()
     {
-        $response = ClientSimple::move('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->move('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testCopy()
     {
-        $response = ClientSimple::copy('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->copy('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testLink()
     {
-        $response = ClientSimple::link('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->link('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testUnlink()
     {
-        $response = ClientSimple::unlink('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->unlink('');
         var_export($response);
         self::assertIsObject($response);
     }
 
     public function testWrapped()
     {
-        $response = ClientSimple::wrapped('https://www.baidu.com');
+        $client = new ClientSimple('https://www.baidu.com');
+        $response = $client->wrapped('');
         var_export($response);
         self::assertIsObject($response);
     }
