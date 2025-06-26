@@ -2,7 +2,6 @@
 
 namespace Fize\Http;
 
-use CURLFile;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -173,46 +172,8 @@ class ClientOnce
      */
     protected static function sendRequest(string $method, string $url, $body = null, array $headers = [], array $opts = [], string $cookie_dir = null, int $time_out = 30, int $retries = 1): ResponseInterface
     {
-        $client = new Client($cookie_dir, $time_out, $retries);
-
-        $data = null;
-        if (is_string($body)) {
-            $data = $body;
-        } elseif (self::isUploadFile($body)) {
-            $data = $body;  // 需要POST上传文件时直接传递数组
-        } elseif (!empty($body)) {
-            $data = http_build_query($body);
-        }
-        if (!is_null($data)) {
-            $client->setOption(CURLOPT_POSTFIELDS, $data);
-        }
-
-        if (is_array($body)) {
-            $body = null;  // 使用CURL直接传递body
-        }
-        if ($opts) {
-            $client->setOptions($opts);
-        }
-
-        $request = new Request($method, $url, $body, $headers);
-        return $client->sendRequest($request);
-    }
-
-    /**
-     * 判断上传的东西是否包含文件上传
-     * @param mixed $body 请求体
-     * @return bool
-     */
-    private static function isUploadFile($body): bool
-    {
-        if (!is_array($body)) {
-            return false;
-        }
-        foreach ($body as $val) {
-            if ($val instanceof CURLFile) {
-                return true;
-            }
-        }
-        return false;
+        $uri = new Uri($url);
+        $client = new ClientSimple($uri->getHost(), $cookie_dir, $time_out, $retries, $opts);
+        return $client->sendRequest($method, $uri, $body, $headers);
     }
 }

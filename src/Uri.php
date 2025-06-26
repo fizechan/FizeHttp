@@ -148,15 +148,15 @@ class Uri implements UriInterface
 
     /**
      * 构造
-     * @param string $uri 待解析URI
+     * @param string $url 待解析URL
      * @throws InvalidArgumentException
      */
-    public function __construct(string $uri = '')
+    public function __construct(string $url = '')
     {
-        if ($uri != '') {
-            $parts = parse_url($uri);
+        if ($url != '') {
+            $parts = parse_url($url);
             if ($parts === false) {
-                throw new InvalidArgumentException("Unable to parse URI: $uri");
+                throw new InvalidArgumentException("Unable to parse URL: {$url}");
             }
             $this->applyParts($parts);
         }
