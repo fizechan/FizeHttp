@@ -11,7 +11,7 @@ class ClientEasy
 {
 
     /**
-     * @var Client HTTP客户端
+     * @var ClientSimple HTTP简易客户端
      */
     protected $client;
 
@@ -25,10 +25,7 @@ class ClientEasy
      */
     public function __construct(string $host, string $cookie_dir = null, int $time_out = 30, int $retries = 1, array $opts = [])
     {
-        $this->client = new ClientSimple($host, $cookie_dir, $time_out, $retries);
-        if ($opts) {
-            $this->client->setOptions($opts);
-        }
+        $this->client = new ClientSimple($host, $cookie_dir, $time_out, $retries, $opts);
     }
 
     /**

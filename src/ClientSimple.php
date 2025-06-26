@@ -71,6 +71,25 @@ class ClientSimple
     }
 
     /**
+     * 设置CURL选项
+     * @param int   $key   键名
+     * @param mixed $value 键值
+     */
+    public function setOption(int $key, $value)
+    {
+        $this->client->setOption($key, $value);
+    }
+
+    /**
+     * 批量添加CURL选项
+     * @param array $options CURL选项
+     */
+    public function setOptions(array $options)
+    {
+        $this->client->setOptions($options);
+    }
+
+    /**
      * 判断上传的东西是否包含文件上传
      * @param mixed $body 请求体
      * @return bool
