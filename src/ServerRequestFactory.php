@@ -63,7 +63,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $_COOKIE = $request->getCookieParams();
         $_GET = $request->getQueryParams();
         $_POST = $request->getParsedBody();
-        $_FILES = $request->getUploadedFiles();
+        $_FILES = $request->getUploadedFiles();  // @todo $_FILES不是规范化，需要转换。
     }
 
     /**
