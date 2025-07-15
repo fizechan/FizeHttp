@@ -4,10 +4,8 @@ namespace Fize\Http;
 
 use Fize\Stream\Protocol\CachingStream;
 use Fize\Stream\Protocol\LazyOpenStream;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -39,13 +37,12 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $uri = self::getUriFromGlobals();
         $body = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
-
         $server_request = new ServerRequest($method, $uri, $body, $headers, $_SERVER, $protocol);
         return $server_request
             ->withCookieParams($_COOKIE)
             ->withQueryParams($_GET)
             ->withParsedBody($_POST)
-            ->withUploadedFiles(self::normalizeFiles($_FILES));
+            ->withUploadedFiles((new UploadedFileFactory())->createUploadedFilesFromSpec($_FILES));
     }
 
     /**
@@ -56,14 +53,14 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     public function setGlobals(ServerRequestInterface $request)
     {
-        global $_SERVER, $_COOKIE, $_GET, $_POST, $_FILES;
+        global $_SERVER, $_COOKIE, $_GET, $_POST;
         $_SERVER = $request->getServerParams();
         $_SERVER['REQUEST_METHOD'] = $request->getMethod();
         $_SERVER['SERVER_PROTOCOL'] = $request->getProtocolVersion();
         $_COOKIE = $request->getCookieParams();
         $_GET = $request->getQueryParams();
         $_POST = $request->getParsedBody();
-        $_FILES = $request->getUploadedFiles();  // @todo $_FILES不是规范化，需要转换。
+        (new UploadedFileFactory())->setGlobalsByUploadedFiles($request->getUploadedFiles());
     }
 
     /**
@@ -73,7 +70,6 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function getUriFromGlobals(): Uri
     {
         $uri = new Uri('');
-
         $uri = $uri->withScheme(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
 
         $has_port = false;
@@ -131,73 +127,5 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $port = $parts['port'] ?? null;
 
         return [$host, $port];
-    }
-
-    /**
-     * 根据形如 $_FILES 的数组创建一个UploadedFile数组树
-     * @param array $files 上传文件数组
-     * @return array
-     */
-    protected static function normalizeFiles(array $files): array
-    {
-        $normalized = [];
-
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $normalized[$key] = $value;
-            } elseif (is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
-//                continue;
-            } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
-            }
-        }
-
-        return $normalized;
-    }
-
-    /**
-     * 从临时文件创建UploadedFile
-     * @param array $value 上传文件数组
-     * @return array|UploadedFile
-     */
-    private static function createUploadedFileFromSpec(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
-        }
-
-        return new UploadedFile(
-            $value['tmp_name'],
-            (int)$value['size'],
-            (int)$value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-    /**
-     * 从多个临时文件创建UploadedFile数组树
-     * @param array $files
-     * @return UploadedFile[]
-     */
-    private static function normalizeNestedFileSpec(array $files = []): array
-    {
-        $normalized_files = [];
-
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size'     => $files['size'][$key],
-                'error'    => $files['error'][$key],
-                'name'     => $files['name'][$key],
-                'type'     => $files['type'][$key],
-            ];
-            $normalized_files[$key] = self::createUploadedFileFromSpec($spec);
-        }
-
-        return $normalized_files;
     }
 }

@@ -34,6 +34,46 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     }
 
     /**
+     * 从临时文件创建UploadedFile
+     * @param array $value 上传文件数组
+     * @return UploadedFile[]|UploadedFile
+     */
+    public function createUploadedFileFromSpec(array $value)
+    {
+        if (is_array($value['tmp_name'])) {
+            return self::createUploadedFilesFromSpec($value);
+        }
+        return new UploadedFile(
+            $value['tmp_name'],
+            (int)$value['size'],
+            (int)$value['error'],
+            $value['name'],
+            $value['type']
+        );
+    }
+
+    /**
+     * 从多个临时文件创建UploadedFile数组树
+     * @param array $files
+     * @return array
+     */
+    public function createUploadedFilesFromSpec(array $files = []): array
+    {
+        $uploaded_files = [];
+        foreach (array_keys($files['tmp_name']) as $key) {
+            $spec = [
+                'tmp_name' => $files['tmp_name'][$key],
+                'size'     => $files['size'][$key],
+                'error'    => $files['error'][$key],
+                'name'     => $files['name'][$key],
+                'type'     => $files['type'][$key],
+            ];
+            $uploaded_files[$key] = $this->createUploadedFileFromSpec($spec);
+        }
+        return $uploaded_files;
+    }
+
+    /**
      * 从全局变量创建UploadedFile对象
      * @param string $name 文件表单域名称
      * @return UploadedFileInterface
@@ -56,7 +96,12 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         );
     }
 
-    public function createUploadedFilesFromGlobals($name = null): array
+    /**
+     * 从全局变量创建UploadedFile对象数组
+     * @param string|null $name 文件表单域名称，不指定则从所有文件中获取
+     * @return UploadedFile[]
+     */
+    public function createUploadedFilesFromGlobals(string $name = null): array
     {
         $files = $name === null ? $_FILES : $_FILES[$name];
         if ($files === null) {
@@ -65,7 +110,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         if (!is_array($files)) {
             throw new InvalidArgumentException(sprintf('Files "%s" is not a array.', $name));
         }
-        $upfiles = [];
+        return $this->createUploadedFilesFromSpec($files);
     }
 
     /**
@@ -76,6 +121,29 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     public function setGlobals(array $files, $format = false)
     {
         global $_FILES;
+        if ($format) {
+            $temp = [];
+            $tmp_names = [];
+            $sizes = [];
+            $errors = [];
+            $names = [];
+            $types = [];
+            foreach ($files as $key => $value) {
+                $temp[$key] = [
+                    'tmp_name' => $value['tmp_name'],
+                    'size' => $value['size'],
+                    'error' => $value['error'],
+                    'name' => $value['name'],
+                    'type' => $value['type']
+                ];
+            }
+        }
         $_FILES = $files;  // @todo $_FILES不是规范化，需要转换。
+    }
+
+    public function setGlobalsByUploadedFiles(array $uploadedFiles)
+    {
+        global $_FILES;
+        $_FILES = [];
     }
 }
