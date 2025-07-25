@@ -122,7 +122,7 @@ class UploadedFile implements UploadedFileInterface
      * 把上传的文件移动到新目录
      * @param string $targetPath 目标目录
      */
-    public function moveTo($targetPath)
+    public function moveTo(string $targetPath)
     {
         $this->validateActive();
 

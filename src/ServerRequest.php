@@ -171,7 +171,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param mixed  $default 默认值
      * @return mixed
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string$name, $default = null)
     {
         if (false === array_key_exists($name, $this->attributes)) {
             return $default;
@@ -185,7 +185,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param mixed  $value 键值
      * @return static
      */
-    public function withAttribute($name, $value): ServerRequest
+    public function withAttribute(string $name, $value): ServerRequest
     {
         $new = clone $this;
         $new->attributes[$name] = $value;
@@ -197,7 +197,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutAttribute($name): ServerRequest
+    public function withoutAttribute(string $name): ServerRequest
     {
         if (false === array_key_exists($name, $this->attributes)) {
             return $this;

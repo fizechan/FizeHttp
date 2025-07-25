@@ -132,8 +132,7 @@ class Client implements ClientInterface
         }
 
         if (
-            isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] &&
-            isset($headers['Location']) && !empty($headers['Location'])
+            isset($this->options[CURLOPT_FOLLOWLOCATION]) && $this->options[CURLOPT_FOLLOWLOCATION] && !empty($headers['Location'])
         ) {
             if ($headers['Location'] == $url) {
                 return new Response($body, intval($status['http_code']), $headers);

@@ -41,7 +41,7 @@ abstract class Message implements MessageInterface
      * @param string $version HTTP 协议版本
      * @return static
      */
-    public function withProtocolVersion($version): Message
+    public function withProtocolVersion(string $version): Message
     {
         $new = clone $this;
         $new->protocolVersion = $version;
@@ -66,7 +66,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return bool
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         $name = $this->getRealHeaderName($name);
         return !is_null($name);
@@ -79,7 +79,7 @@ abstract class Message implements MessageInterface
      * @param string $name
      * @return string[] 不存在则返回空数组
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         $name = $this->getRealHeaderName($name);
         if (is_null($name)) {
@@ -95,7 +95,7 @@ abstract class Message implements MessageInterface
      * @param string $name
      * @return string
      */
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         return implode(',', $this->getHeader($name));
     }
@@ -108,7 +108,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withHeader($name, $value): Message
+    public function withHeader(string $name, $value): Message
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -127,7 +127,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withAddedHeader($name, $value): Message
+    public function withAddedHeader(string $name, $value): Message
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -152,7 +152,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutHeader($name): Message
+    public function withoutHeader(string $name): Message
     {
         $orig_name = $this->getRealHeaderName($name);
         $new = clone $this;
