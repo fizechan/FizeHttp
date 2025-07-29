@@ -4,6 +4,8 @@
 # FizeHttp
 Http底层库。
 
+FizeHttp是一个遵循PSR-7、PSR-15、PSR-17、PSR-18规范的HTTP底层库。
+
 项目GitHub : [ https://github.com/fizechan/FizeHttp ](https://github.com/fizechan/FizeHttp)
 
 参考手册 : [ https://fizehttp.readthedocs.io/zh_CN/latest/index.html ](https://fizehttp.readthedocs.io/zh_CN/latest/index.html)

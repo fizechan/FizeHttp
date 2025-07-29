@@ -166,7 +166,7 @@ class Uri implements UriInterface
      * 转字符串
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return self::composeComponents(
             $this->scheme,
@@ -298,7 +298,7 @@ class Uri implements UriInterface
      * @param string $scheme 协议
      * @return static
      */
-    public function withScheme(string$scheme): Uri
+    public function withScheme(string$scheme): UriInterface
     {
         $scheme = $this->filterScheme($scheme);
 
@@ -320,7 +320,7 @@ class Uri implements UriInterface
      * @param string|null $password 密码
      * @return static
      */
-    public function withUserInfo(string $user, ?string $password = null): Uri
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $info = $this->filterUserInfoComponent($user);
         if ($password !== null) {
@@ -343,7 +343,7 @@ class Uri implements UriInterface
      * @param string $host 主机
      * @return static
      */
-    public function withHost(string $host): Uri
+    public function withHost(string $host): UriInterface
     {
         $host = $this->filterHost($host);
 
@@ -363,7 +363,7 @@ class Uri implements UriInterface
      * @param int|null $port 端口，null表示不指定使用默认端口
      * @return static
      */
-    public function withPort(?int $port): Uri
+    public function withPort(?int $port): UriInterface
     {
         $port = $this->filterPort($port);
 
@@ -384,7 +384,7 @@ class Uri implements UriInterface
      * @param string $path 路径
      * @return static
      */
-    public function withPath(string $path): Uri
+    public function withPath(string $path): UriInterface
     {
         $path = $this->filterPath($path);
 
@@ -404,7 +404,7 @@ class Uri implements UriInterface
      * @param string $query 参数
      * @return static
      */
-    public function withQuery(string $query): Uri
+    public function withQuery(string $query): UriInterface
     {
         $query = $this->filterQueryAndFragment($query);
 
@@ -423,7 +423,7 @@ class Uri implements UriInterface
      * @param string $fragment 锚点
      * @return static
      */
-    public function withFragment(string $fragment): Uri
+    public function withFragment(string $fragment): UriInterface
     {
         $fragment = $this->filterQueryAndFragment($fragment);
 

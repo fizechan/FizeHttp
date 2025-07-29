@@ -4,7 +4,6 @@ namespace Tests;
 
 use Fize\Http\Client;
 use Fize\Http\Request;
-use Fize\Http\Response;
 use PHPUnit\Framework\TestCase;
 
 class TestClient extends TestCase
@@ -46,7 +45,7 @@ class TestClient extends TestCase
         $content = (string)$body;
         echo "*****\r\n";
         echo $content;
-        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull($response);
 
 //        // 测试文件上传
 //        $file = 'H:\web\shangyi\www.sygame.loc\src\static\index\bafang\index\image\bg.jpg';

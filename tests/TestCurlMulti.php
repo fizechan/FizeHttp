@@ -116,6 +116,7 @@ class TestCurlMulti extends TestCase
             $res[$i] = CurlMulti::getcontent($conn[$i]);
             curl_close($conn[$i]);
         }
+        var_dump($res);
 
         $info = $mh->infoRead();
         var_dump($info);

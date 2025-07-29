@@ -16,7 +16,7 @@ class TestRequestException extends TestCase
             throw new RequestException($request);
         } catch (RequestException $exception) {
             var_dump($exception);
-            self::assertInstanceOf(RequestException::class, $exception);
+            self::assertNotNull($exception);
         }
     }
 

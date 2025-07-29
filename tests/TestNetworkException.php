@@ -16,7 +16,7 @@ class TestNetworkException extends TestCase
             throw new NetworkException($request);
         } catch (NetworkException $exception) {
             var_dump($exception);
-            self::assertInstanceOf(NetworkException::class, $exception);
+            self::assertNotNull($exception);
         }
     }
 

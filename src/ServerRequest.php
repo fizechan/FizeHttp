@@ -80,7 +80,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $cookies Cookie数据
      * @return static
      */
-    public function withCookieParams(array $cookies): ServerRequest
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         $new = clone $this;
         $new->cookieParams = $cookies;
@@ -101,7 +101,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $query 查询字符串参数数组
      * @return static
      */
-    public function withQueryParams(array $query): ServerRequest
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         $new = clone $this;
         $new->queryParams = $query;
@@ -122,7 +122,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array $uploadedFiles 指定的上传文件数据
      * @return static
      */
-    public function withUploadedFiles(array $uploadedFiles): ServerRequest
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $new = clone $this;
         $new->uploadedFiles = $uploadedFiles;
@@ -149,7 +149,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array|object|null $data 反序列化的消息体数据
      * @return static
      */
-    public function withParsedBody($data): ServerRequest
+    public function withParsedBody($data): ServerRequestInterface
     {
         $new = clone $this;
         $new->parsedBody = $data;
@@ -185,7 +185,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param mixed  $value 键值
      * @return static
      */
-    public function withAttribute(string $name, $value): ServerRequest
+    public function withAttribute(string $name, $value): ServerRequestInterface
     {
         $new = clone $this;
         $new->attributes[$name] = $value;
@@ -197,7 +197,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutAttribute(string $name): ServerRequest
+    public function withoutAttribute(string $name): ServerRequestInterface
     {
         if (false === array_key_exists($name, $this->attributes)) {
             return $this;

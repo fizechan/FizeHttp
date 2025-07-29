@@ -92,7 +92,7 @@ class Request extends Message implements RequestInterface
      * @param string $requestTarget 请求目标
      * @return self
      */
-    public function withRequestTarget(string $requestTarget): Request
+    public function withRequestTarget(string $requestTarget): RequestInterface
     {
         if (preg_match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
@@ -117,7 +117,7 @@ class Request extends Message implements RequestInterface
      * @param string $method 请求方法
      * @return self
      */
-    public function withMethod(string $method): Request
+    public function withMethod(string $method): RequestInterface
     {
         $this->assertMethod($method);
         $new = clone $this;
@@ -140,7 +140,7 @@ class Request extends Message implements RequestInterface
      * @param bool         $preserveHost 是否保持原 HOST 信息
      * @return self
      */
-    public function withUri(UriInterface $uri, bool $preserveHost = false): Request
+    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $new = clone $this;
         $new->uri = $uri;

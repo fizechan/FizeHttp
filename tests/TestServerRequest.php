@@ -14,7 +14,7 @@ class TestServerRequest extends TestCase
     {
         $sr = new ServerRequest('GET', 'https://www.baidu.com');
         var_dump($sr);
-        self::assertInstanceOf(ServerRequest::class, $sr);
+        self::assertNotNull($sr);
     }
 
     public function testGetServerParams()

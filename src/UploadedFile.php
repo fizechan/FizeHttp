@@ -65,6 +65,11 @@ class UploadedFile implements UploadedFileInterface
     private $moved = false;
 
     /**
+     * @var bool 是否为测试模式。测试模式下，原始文件不删除，以复制模式上传文件。
+     */
+    protected $forTest = false;
+
+    /**
      * 构造
      * @param StreamInterface|string|resource $streamOrFile    文件或数据流
      * @param int                             $size            字节数
@@ -89,7 +94,7 @@ class UploadedFile implements UploadedFileInterface
         }
         $this->setClientMediaType($client_mime);
 
-        if ($this->isOk()) {
+        if ($this->isUploadOK()) {
             $this->setStreamOrFile($streamOrFile);
         }
     }
@@ -107,7 +112,7 @@ class UploadedFile implements UploadedFileInterface
      * 获取上传文件的数据流
      * @return StreamInterface
      */
-    public function getStream()
+    public function getStream(): StreamInterface
     {
         $this->validateActive();
 
@@ -122,7 +127,7 @@ class UploadedFile implements UploadedFileInterface
      * 把上传的文件移动到新目录
      * @param string $targetPath 目标目录
      */
-    public function moveTo(string $targetPath)
+    public function moveTo(string $targetPath): void
     {
         $this->validateActive();
 
@@ -133,7 +138,11 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file) {
-            $this->moved = php_sapi_name() == 'cli' ? rename($this->file, $targetPath) : move_uploaded_file($this->file, $targetPath);
+            if ($this->forTest) {
+                $this->moved = copy($this->file, $targetPath);  // 测试模式下，仅复制，不删除原文件。
+            } else {
+                $this->moved = php_sapi_name() == 'cli' ? rename($this->file, $targetPath) : move_uploaded_file($this->file, $targetPath);
+            }
         } else {
             Stream::copyToStream($this->getStream(), new LazyOpenStream($targetPath, 'w'));
             $this->moved = true;
@@ -182,6 +191,16 @@ class UploadedFile implements UploadedFileInterface
     public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
+    }
+
+    /**
+     * 设置测试模式
+     * @param bool $forTest true表示测试模式，false表示生产模式。
+     * @return void
+     */
+    public function forTest(bool $forTest = true): void
+    {
+        $this->forTest = $forTest;
     }
 
     /**
@@ -245,7 +264,7 @@ class UploadedFile implements UploadedFileInterface
      * 判断上传是否无错误
      * @return bool
      */
-    private function isOk(): bool
+    private function isUploadOK(): bool
     {
         return $this->error === UPLOAD_ERR_OK;
     }
@@ -274,7 +293,7 @@ class UploadedFile implements UploadedFileInterface
      */
     private function validateActive()
     {
-        if (false === $this->isOk()) {
+        if (false === $this->isUploadOK()) {
             throw new RuntimeException('Cannot retrieve stream due to upload error');
         }
 

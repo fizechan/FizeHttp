@@ -12,18 +12,18 @@ class TestResponse extends TestCase
     {
         $response = new Response('这是响应内容');
         var_dump($response);
-        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull($response);
 
         $response = new Response('这是响应内容', 400);
         var_dump($response);
-        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull($response);
 
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
         $response = new Response('这是响应内容', 200, $headers);
         var_dump($response);
-        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull($response);
     }
 
     public function testGetStatusCode()

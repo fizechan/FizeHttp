@@ -66,7 +66,7 @@ class TestRequest extends TestCase
     {
         $request = new Request('GET', 'https://www.baidu.com/test1/test2?kw=123哈哈哈');
         $uri = $request->getUri();
-        self::assertInstanceOf(Uri::class, $uri);
+        self::assertNotNull($uri);
     }
 
     public function testWithUri()

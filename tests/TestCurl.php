@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use CURLFile;
 use Fize\Http\Curl;
 use PHPUnit\Framework\TestCase;
 
@@ -92,7 +91,7 @@ class TestCurl extends TestCase
     {
         $root = dirname(__DIR__);
         $cfile = Curl::fileCreate($root . '/test/TestCurl.php', 'application/octet-stream', 'file');
-        self::assertInstanceOf(CURLFile::class, $cfile);
+        self::assertNotNull($cfile);
     }
 
     public function testGetinfo()

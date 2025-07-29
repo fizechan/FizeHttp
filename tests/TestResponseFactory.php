@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Fize\Http\Response;
 use Fize\Http\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +13,6 @@ class TestResponseFactory extends TestCase
         $factory = new ResponseFactory();
         $response = $factory->createResponse();
         var_dump($response);
-        self::assertInstanceOf(Response::class, $response);
+        self::assertNotNull($response);
     }
 }

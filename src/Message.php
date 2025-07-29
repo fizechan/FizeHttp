@@ -41,7 +41,7 @@ abstract class Message implements MessageInterface
      * @param string $version HTTP 协议版本
      * @return static
      */
-    public function withProtocolVersion(string $version): Message
+    public function withProtocolVersion(string $version): MessageInterface
     {
         $new = clone $this;
         $new->protocolVersion = $version;
@@ -108,7 +108,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withHeader(string $name, $value): Message
+    public function withHeader(string $name, $value): MessageInterface
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -127,7 +127,7 @@ abstract class Message implements MessageInterface
      * @param string|string[] $value 报头信息或报头信息数组
      * @return static
      */
-    public function withAddedHeader(string $name, $value): Message
+    public function withAddedHeader(string $name, $value): MessageInterface
     {
         $this->assertHeaderName($name);
         $value = $this->normalizeHeaderValue($value);
@@ -152,7 +152,7 @@ abstract class Message implements MessageInterface
      * @param string $name 键名
      * @return static
      */
-    public function withoutHeader(string $name): Message
+    public function withoutHeader(string $name): MessageInterface
     {
         $orig_name = $this->getRealHeaderName($name);
         $new = clone $this;
@@ -166,7 +166,7 @@ abstract class Message implements MessageInterface
      * 获取消息的内容
      * @return StreamInterface
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         if (!$this->stream) {
             $resource = fopen('php://temp', 'r+');
@@ -181,7 +181,7 @@ abstract class Message implements MessageInterface
      * @param StreamInterface $body 数据流形式的内容
      * @return static
      */
-    public function withBody(StreamInterface $body): Message
+    public function withBody(StreamInterface $body): MessageInterface
     {
         $new = clone $this;
         $new->stream = $body;

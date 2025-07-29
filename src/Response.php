@@ -142,7 +142,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase 状态短语
      * @return static
      */
-    public function withStatus(int $code, string $reasonPhrase = ''): Response
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
     {
         $this->assertStatusCodeIsInteger($code);
         $this->assertStatusCodeRange($code);

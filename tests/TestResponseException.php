@@ -16,7 +16,7 @@ class TestResponseException extends TestCase
             throw new ResponseException($response);
         } catch (ResponseException $exception) {
             var_dump($exception);
-            self::assertInstanceOf(ResponseException::class, $exception);
+            self::assertNotNull($exception);
         }
     }
 

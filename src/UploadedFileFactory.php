@@ -24,10 +24,10 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      */
     public function createUploadedFile(
         StreamInterface $stream,
-        int             $size = null,
+        ?int            $size = null,
         int             $error = UPLOAD_ERR_OK,
-        string          $clientFilename = null,
-        string          $clientMediaType = null
+        ?string         $clientFilename = null,
+        ?string         $clientMediaType = null
     ): UploadedFileInterface
     {
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
@@ -35,58 +35,12 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
 
     /**
      * 从临时文件创建UploadedFile
-     * @param array $value 上传文件数组
-     * @return UploadedFile[]|UploadedFile
-     */
-    public function createUploadedFileFromSpec(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return self::createUploadedFilesFromSpec($value);
-        }
-        return new UploadedFile(
-            $value['tmp_name'],
-            (int)$value['size'],
-            (int)$value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-    /**
-     * 从多个临时文件创建UploadedFile数组树
-     * @param array $files
-     * @return array
-     */
-    public function createUploadedFilesFromSpec(array $files = []): array
-    {
-        $uploaded_files = [];
-        foreach (array_keys($files['tmp_name']) as $key) {
-            $spec = [
-                'tmp_name' => $files['tmp_name'][$key],
-                'size'     => $files['size'][$key],
-                'error'    => $files['error'][$key],
-                'name'     => $files['name'][$key],
-                'type'     => $files['type'][$key],
-            ];
-            $uploaded_files[$key] = $this->createUploadedFileFromSpec($spec);
-        }
-        return $uploaded_files;
-    }
-
-    /**
-     * 从全局变量创建UploadedFile对象
-     * @param string $name 文件表单域名称
+     * @param array $file 上传文件数组
      * @return UploadedFileInterface
      */
-    public function createUploadedFileFromGlobals(string $name): UploadedFileInterface
+    public function createUploadedFileFromSpec(array $file): UploadedFileInterface
     {
-        $file = $_FILES[$name] ?? null;
-        if ($file === null) {
-            throw new InvalidArgumentException(sprintf('File "%s" does not exist.', $name));
-        }
-        if (is_array($file['tmp_name'])) {
-            throw new InvalidArgumentException(sprintf('File "%s" with multiple.', $name));
-        }
+        self::assertIsUploadItem($file);
         return new UploadedFile(
             $file['tmp_name'],
             (int)$file['size'],
@@ -97,13 +51,98 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     }
 
     /**
+     * 从多个临时文件创建UploadedFile数组树
+     * @param array $files
+     * @return array
+     */
+    public function createUploadedFilesFromSpec(array $files): array
+    {
+        $uploaded_files = [];
+        if (self::isUploadItem($files)) {  // 自身已是上传文件对象
+            if (is_array($files['tmp_name'])) {
+                foreach ($files['tmp_name'] as $index => $tmp_name) {
+                    $file = [
+                        'tmp_name' => $files['tmp_name'][$index],
+                        'name'     => $files['name'][$index],
+                        'size'     => $files['size'][$index],
+                        'type'     => $files['type'][$index],
+                        'error'    => $files['error'][$index]
+                    ];
+                    $uploaded_files[] = $this->createUploadedFileFromSpec($file);
+                }
+            } else {
+                $uploaded_files[] = $this->createUploadedFileFromSpec($files);
+            }
+            return $uploaded_files;
+        }
+
+        foreach ($files as $key => $item) {
+            if (self::isUploadItem($item)) {
+                if (is_array($item['tmp_name'])) {
+                    $uploaded_files2 = [];
+                    foreach ($item['tmp_name'] as $index => $tmp_name) {
+                        $file = [
+                            'tmp_name' => $item['tmp_name'][$index],
+                            'name'     => $item['name'][$index],
+                            'size'     => $item['size'][$index],
+                            'type'     => $item['type'][$index],
+                            'error'    => $item['error'][$index]
+                        ];
+                        $uploaded_files2[] = $this->createUploadedFileFromSpec($file);
+                    }
+                    $uploaded_files[$key] = $uploaded_files2;
+                } else {
+                    $uploaded_files[$key] = $this->createUploadedFileFromSpec($item);
+                }
+            } else {
+                $uploaded_files[$key] = $this->createUploadedFilesFromSpec($item);
+            }
+        }
+        return $uploaded_files;
+    }
+
+    /**
+     * 从全局变量创建UploadedFile对象
+     * @param string|array $name 文件表单域名称。如果是多维，则从顶部开始书写每层键名。
+     * @return UploadedFileInterface
+     */
+    public function createUploadedFileFromGlobals($name): UploadedFileInterface
+    {
+        if (is_array($name)) {
+            $file = $_FILES;
+            foreach ($name as $key) {
+                $file = $file[$key];
+            }
+        } else {
+            $file = $_FILES[$name] ?? null;
+        }
+        if ($file === null) {
+            throw new InvalidArgumentException(sprintf('File "%s" does not exist.', $name));
+        }
+        if (is_array($file['tmp_name'])) {
+            throw new InvalidArgumentException(sprintf('File "%s" with multiple.', $name));
+        }
+        return $this->createUploadedFileFromSpec($file);
+    }
+
+    /**
      * 从全局变量创建UploadedFile对象数组
-     * @param string|null $name 文件表单域名称，不指定则从所有文件中获取
+     * @param string|array|null $name 文件表单域名称。如果是多维，则从顶部开始书写每层键名。不指定则从所有文件中获取。
      * @return UploadedFile[]
      */
-    public function createUploadedFilesFromGlobals(string $name = null): array
+    public function createUploadedFilesFromGlobals($name = null): array
     {
-        $files = $name === null ? $_FILES : $_FILES[$name];
+        $files = $_FILES;
+        if ($name) {
+            if (is_array($name)) {
+                $file = $_FILES;
+                foreach ($name as $key) {
+                    $file = $file[$key];
+                }
+            } else {
+                $files = $_FILES[$name];
+            }
+        }
         if ($files === null) {
             throw new InvalidArgumentException(sprintf('Files "%s" does not exist.', $name));
         }
@@ -117,33 +156,184 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * 设置服务端请求全局变量
      *
      * 本方法主要应用在模拟HTTP的单元测试中。
+     * @param array $files  上传文件
+     * @param bool  $format 是否按$_FILES格式进行转换
+     * @return void
      */
-    public function setGlobals(array $files, $format = false)
+    public static function setGlobals(array $files, bool $format = false)
     {
         global $_FILES;
         if ($format) {
-            $temp = [];
-            $tmp_names = [];
-            $sizes = [];
-            $errors = [];
-            $names = [];
-            $types = [];
-            foreach ($files as $key => $value) {
-                $temp[$key] = [
-                    'tmp_name' => $value['tmp_name'],
-                    'size' => $value['size'],
-                    'error' => $value['error'],
-                    'name' => $value['name'],
-                    'type' => $value['type']
-                ];
-            }
+            $files = self::convertToGlobalFiles($files);
         }
-        $_FILES = $files;  // @todo $_FILES不是规范化，需要转换。
+        $_FILES = $files;
     }
 
-    public function setGlobalsByUploadedFiles(array $uploadedFiles)
+    /**
+     * 设置服务端请求全局变量
+     *
+     * 本方法主要应用在模拟HTTP的单元测试中。
+     * @param array  $uploadedFiles 上传文件数组
+     * @param string $name          单文件时要设置的字段名
+     * @return void
+     */
+    public static function setGlobalsByUploadedFiles(array $uploadedFiles, string $name = 'file')
     {
         global $_FILES;
-        $_FILES = [];
+        $_FILES = self::convertToFilesArray($uploadedFiles, $name);
+    }
+
+    /**
+     * 将规范数组转化为$_FILES格式
+     * @param array $files 规范数组
+     * @return array
+     */
+    protected static function convertToGlobalFiles(array $files): array
+    {
+        $uploaded_files = [];
+        foreach ($files as $key => $item) {
+            if (self::isUploadItem($item)) {
+                $uploaded_files[$key] = $item;
+            } elseif (!self::isAssociativeArray($item)) {
+                $tmp_names = [];
+                $names = [];
+                $sizes = [];
+                $types = [];
+                $errors = [];
+                foreach ($item as $upFile) {
+                    $tmp_names[] = $upFile['tmp_name'];
+                    $names[] = $upFile['name'];
+                    $sizes[] = $upFile['size'];
+                    $types[] = $upFile['type'];
+                    $errors[] = $upFile['error'];
+                }
+                $uploaded_files[$key] = [
+                    'tmp_name' => $tmp_names,
+                    'name'     => $names,
+                    'size'     => $sizes,
+                    'type'     => $types,
+                    'error'    => $errors,
+                ];
+            } else {
+                $uploaded_files[$key] = self::convertToGlobalFiles($item);
+            }
+        }
+        return $uploaded_files;
+    }
+
+    /**
+     * 将 PSR-7 UploadedFile 对象或数组转换为 $_FILES 格式
+     * @param UploadedFileInterface|array $uploadedFiles UploadedFile 对象或其数组
+     * @param string                      $name          单文件时要设置的字段名
+     * @return array 符合 $_FILES 结构的数组
+     */
+    protected static function convertToFilesArray($uploadedFiles, string $name): array
+    {
+        $files = [];
+        if ($uploadedFiles instanceof UploadedFileInterface) {
+            // 单文件对象直接处理
+            $files[$name] = self::convertSingleFile($uploadedFiles);
+        } elseif (is_array($uploadedFiles)) {
+            // 遍历数组（字段名 => UploadedFile 对象或对象数组）
+            foreach ($uploadedFiles as $field => $fileOrArray) {
+                if (is_array($fileOrArray)) {
+                    if (self::isAssociativeArray($fileOrArray)) {
+                        // 下级路径
+                        $files[$field] = self::convertToFilesArray($fileOrArray, $name);
+                    } else {
+                        // 多文件上传（如：$files['documents'][0]）
+                        $files[$field] = self::convertFileArray($fileOrArray);
+                    }
+                } else {
+                    // 单文件上传（如：$files['avatar']）
+                    $files[$field] = self::convertSingleFile($fileOrArray);
+                }
+            }
+        }
+        return $files;
+    }
+
+    /**
+     * 转换单个 UploadedFile 对象为 $_FILES 单元
+     * @param UploadedFileInterface $file
+     * @return array
+     */
+    protected static function convertSingleFile(UploadedFileInterface $file): array
+    {
+        return [
+            'tmp_name' => self::getTempFilePath($file), // 模拟临时路径
+            'name'     => $file->getClientFilename(),
+            'size'     => $file->getSize(),
+            'type'     => $file->getClientMediaType(),
+            'error'    => $file->getError(),
+        ];
+    }
+
+    /**
+     * 转换 UploadedFile 对象数组为 $_FILES 的多文件结构
+     * @param array $files
+     * @return array
+     */
+    private static function convertFileArray(array $files): array
+    {
+        $result = ['tmp_name' => [], 'name' => [], 'size' => [], 'type' => [], 'error' => []];
+        foreach ($files as $file) {
+            $result['tmp_name'][] = self::getTempFilePath($file);
+            $result['name'][] = $file->getClientFilename();
+            $result['size'][] = $file->getSize();
+            $result['type'][] = $file->getClientMediaType();
+            $result['error'][] = $file->getError();
+        }
+        return $result;
+    }
+
+    /**
+     * 获取临时文件路径（若文件已移动则返回空）
+     * @param UploadedFileInterface $file
+     * @return string
+     */
+    private static function getTempFilePath(UploadedFileInterface $file): string
+    {
+        $stream = $file->getStream();
+        $metadata = $stream->getMetadata();
+        return $metadata['uri'] ?? ''; // 返回流资源 URI（如 php://temp）
+    }
+
+    /**
+     * 判断是否为上传文件
+     * @param array $item 判断项
+     * @return bool
+     */
+    protected static function isUploadItem(array $item): bool
+    {
+        $keys = ['tmp_name', 'name', 'size', 'type', 'error'];
+        return count(array_intersect($keys, array_keys($item))) === count($keys);
+    }
+
+    /**
+     * 检测上传文件
+     * @param array $item 判断项
+     */
+    protected static function assertIsUploadItem(array $item)
+    {
+        if (!self::isUploadItem($item)) {
+            throw new InvalidArgumentException("Item is not a valid upload item.");
+        }
+    }
+
+    /**
+     * 是否为关联数组
+     * @param array $array
+     * @return bool
+     */
+    protected static function isAssociativeArray(array $array): bool
+    {
+        foreach (array_keys($array) as $key) {
+            // 如果有任何一个键不是整数，则是关联数组
+            if (!is_int($key)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
