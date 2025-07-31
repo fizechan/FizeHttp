@@ -154,6 +154,7 @@ class Uri implements UriInterface
     public function __construct(string $url = '')
     {
         if ($url != '') {
+            $url = $this->normalizeUrl($url);
             $parts = parse_url($url);
             if ($parts === false) {
                 throw new InvalidArgumentException("Unable to parse URL: {$url}");
@@ -298,7 +299,7 @@ class Uri implements UriInterface
      * @param string $scheme 协议
      * @return static
      */
-    public function withScheme(string$scheme): UriInterface
+    public function withScheme(string $scheme): UriInterface
     {
         $scheme = $this->filterScheme($scheme);
 
@@ -1015,5 +1016,81 @@ class Uri implements UriInterface
         }
 
         return $relative_path;
+    }
+
+    /**
+     * 判断并转换URL为标准格式
+     * @param string $url 待处理的URL
+     * @return string|false 标准化后的URL，无效URL返回false
+     * @todo 处理URL中的特殊字符
+     */
+    protected function normalizeUrl(string $url)
+    {
+        // 步骤1：验证是否为标准URL
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return $url; // 直接返回标准URL
+        }
+
+        $parts = explode('//', $url);
+        $scheme = $parts[0];
+        $others = $parts[1];
+        $parts = explode('/', $others);
+
+
+        $pathinfo = pathinfo($url);
+        $path = $pathinfo['path'] ?? '';
+
+        // 步骤2：尝试修复非标准URL
+        // 2.1 添加缺失的协议
+        if (!parse_url($url, PHP_URL_SCHEME)) {
+            $url = "https://" . ltrim($url, '/');
+        }
+
+        // 2.3 编码特殊字符
+        $parts = parse_url($url);
+        if ($parts === false) return false;
+
+        // 编码路径中的特殊字符
+        if (isset($parts['path'])) {
+            $pathParts = explode('/', $parts['path']);
+            foreach ($pathParts as &$part) {
+                $part = rawurlencode($part);
+            }
+            $parts['path'] = implode('/', $pathParts);
+        }
+
+        // 编码查询参数
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $queryParams);
+            array_walk($queryParams, function (&$value, $key) {
+                $value = rawurlencode($value);
+                $value = rawurldecode($value);
+                print_r($value);
+            });
+            $parts['query'] = http_build_query($queryParams);
+        }
+
+        // 步骤3：重构标准化URL
+        $scheme = $parts['scheme'] ?? 'https';
+        $host = $parts['host'] ?? '';
+        $path = $parts['path'] ?? '';
+        $query = isset($parts['query']) ? '?' . $parts['query'] : '';
+        $fragment = isset($parts['fragment']) ? '#' . rawurlencode($parts['fragment']) : '';
+
+        // 主机名转小写（标准要求）
+        $host = strtolower($host);
+
+        // 构建最终URL
+        $standardUrl = sprintf(
+            "%s://%s%s%s%s",
+            $scheme,
+            $host,
+            $path,
+            $query,
+            $fragment
+        );
+
+        // 二次验证确保转换有效
+        return filter_var($standardUrl, FILTER_VALIDATE_URL) ? $standardUrl : false;
     }
 }

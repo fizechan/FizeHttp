@@ -20,7 +20,7 @@ class TestUri extends TestCase
 
     public function test__toString()
     {
-        $uri = new Uri('https://www.baidu.com?wd=搜索一下#t123');
+        $uri = new Uri('https://www.baidu.com/路径1/路径2/路径3/?wd=搜索一下#t123');
         $url = (string)$uri;
         var_dump($url);
         self::assertIsString($url);
