@@ -25,10 +25,10 @@ class TestUploadedFileFactory extends TestCase
     {
         $spec = [
             'tmp_name' => __FILE__,
-            'name' => basename(__FILE__),
-            'size' => filesize(__FILE__),
-            'type' => 'text/html',
-            'error' => UPLOAD_ERR_OK,
+            'name'     => basename(__FILE__),
+            'size'     => filesize(__FILE__),
+            'type'     => 'text/html',
+            'error'    => UPLOAD_ERR_OK,
         ];
         $factory = new UploadedFileFactory();
         $upf = $factory->createUploadedFileFromSpec($spec);
@@ -41,28 +41,28 @@ class TestUploadedFileFactory extends TestCase
         $files = [
             'file1' => [
                 'tmp_name' => 'phpUxcOty',
-                'name' => 'my-avatar.png',
-                'size' => 90996,
-                'type' => 'image/png',
-                'error' => 0,
+                'name'     => 'my-avatar.png',
+                'size'     => 90996,
+                'type'     => 'image/png',
+                'error'    => 0,
             ],
 
             'files1' => [
                 'tmp_name' => [__FILE__, __FILE__],
-                'name' => ['file0.txt', 'file1.html'],
-                'size' => [filesize(__FILE__), filesize(__FILE__)],
-                'type' => ['text/plain', 'text/html'],
-                'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                'name'     => ['file0.txt', 'file1.html'],
+                'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                'type'     => ['text/plain', 'text/html'],
+                'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
             ],
 
             'my-form' => [
                 'details' => [
                     'file2' => [
                         'tmp_name' => 'phpUxcOty',
-                        'name' => 'my-avatar.png',
-                        'size' => 90996,
-                        'type' => 'image/png',
-                        'error' => 0,
+                        'name'     => 'my-avatar.png',
+                        'size'     => 90996,
+                        'type'     => 'image/png',
+                        'error'    => 0,
                     ],
                 ],
             ],
@@ -71,10 +71,10 @@ class TestUploadedFileFactory extends TestCase
                 'details2' => [
                     'files2' => [
                         'tmp_name' => [__FILE__, __FILE__],
-                        'name' => ['file0.txt', 'file1.html'],
-                        'size' => [filesize(__FILE__), filesize(__FILE__)],
-                        'type' => ['text/plain', 'text/html'],
-                        'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                        'name'     => ['file0.txt', 'file1.html'],
+                        'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                        'type'     => ['text/plain', 'text/html'],
+                        'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
                     ],
                 ],
             ],
@@ -90,28 +90,28 @@ class TestUploadedFileFactory extends TestCase
         $files = [
             'file1' => [
                 'tmp_name' => 'phpUxcOty',
-                'name' => 'my-avatar.png',
-                'size' => 90996,
-                'type' => 'image/png',
-                'error' => 0,
+                'name'     => 'my-avatar.png',
+                'size'     => 90996,
+                'type'     => 'image/png',
+                'error'    => 0,
             ],
 
             'files1' => [
                 'tmp_name' => [__FILE__, __FILE__],
-                'name' => ['file0.txt', 'file1.html'],
-                'size' => [filesize(__FILE__), filesize(__FILE__)],
-                'type' => ['text/plain', 'text/html'],
-                'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                'name'     => ['file0.txt', 'file1.html'],
+                'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                'type'     => ['text/plain', 'text/html'],
+                'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
             ],
 
             'my-form' => [
                 'details' => [
                     'file2' => [
                         'tmp_name' => 'phpUxcOty',
-                        'name' => 'my-avatar.png',
-                        'size' => 90996,
-                        'type' => 'image/png',
-                        'error' => 0,
+                        'name'     => 'my-avatar.png',
+                        'size'     => 90996,
+                        'type'     => 'image/png',
+                        'error'    => 0,
                     ],
                 ],
             ],
@@ -120,10 +120,10 @@ class TestUploadedFileFactory extends TestCase
                 'details2' => [
                     'files2' => [
                         'tmp_name' => [__FILE__, __FILE__],
-                        'name' => ['file0.txt', 'file1.html'],
-                        'size' => [filesize(__FILE__), filesize(__FILE__)],
-                        'type' => ['text/plain', 'text/html'],
-                        'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                        'name'     => ['file0.txt', 'file1.html'],
+                        'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                        'type'     => ['text/plain', 'text/html'],
+                        'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
                     ],
                 ],
             ],
@@ -143,28 +143,28 @@ class TestUploadedFileFactory extends TestCase
         $files = [
             'file1' => [
                 'tmp_name' => 'phpUxcOty',
-                'name' => 'my-avatar.png',
-                'size' => 90996,
-                'type' => 'image/png',
-                'error' => 0,
+                'name'     => 'my-avatar.png',
+                'size'     => 90996,
+                'type'     => 'image/png',
+                'error'    => 0,
             ],
 
             'files1' => [
                 'tmp_name' => [__FILE__, __FILE__],
-                'name' => ['file0.txt', 'file1.html'],
-                'size' => [filesize(__FILE__), filesize(__FILE__)],
-                'type' => ['text/plain', 'text/html'],
-                'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                'name'     => ['file0.txt', 'file1.html'],
+                'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                'type'     => ['text/plain', 'text/html'],
+                'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
             ],
 
             'my-form' => [
                 'details' => [
                     'file2' => [
                         'tmp_name' => 'phpUxcOty',
-                        'name' => 'my-avatar.png',
-                        'size' => 90996,
-                        'type' => 'image/png',
-                        'error' => 0,
+                        'name'     => 'my-avatar.png',
+                        'size'     => 90996,
+                        'type'     => 'image/png',
+                        'error'    => 0,
                     ],
                 ],
             ],
@@ -173,10 +173,10 @@ class TestUploadedFileFactory extends TestCase
                 'details2' => [
                     'files2' => [
                         'tmp_name' => [__FILE__, __FILE__],
-                        'name' => ['file0.txt', 'file1.html'],
-                        'size' => [filesize(__FILE__), filesize(__FILE__)],
-                        'type' => ['text/plain', 'text/html'],
-                        'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                        'name'     => ['file0.txt', 'file1.html'],
+                        'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                        'type'     => ['text/plain', 'text/html'],
+                        'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
                     ],
                 ],
             ],
@@ -199,28 +199,28 @@ class TestUploadedFileFactory extends TestCase
         $files = [
             'file1' => [
                 'tmp_name' => 'phpUxcOty',
-                'name' => 'my-avatar.png',
-                'size' => 90996,
-                'type' => 'image/png',
-                'error' => 0,
+                'name'     => 'my-avatar.png',
+                'size'     => 90996,
+                'type'     => 'image/png',
+                'error'    => 0,
             ],
 
             'files1' => [
                 'tmp_name' => [__FILE__, __FILE__],
-                'name' => ['file0.txt', 'file1.html'],
-                'size' => [filesize(__FILE__), filesize(__FILE__)],
-                'type' => ['text/plain', 'text/html'],
-                'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                'name'     => ['file0.txt', 'file1.html'],
+                'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                'type'     => ['text/plain', 'text/html'],
+                'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
             ],
 
             'my-form' => [
                 'details' => [
                     'file2' => [
                         'tmp_name' => 'phpUxcOty',
-                        'name' => 'my-avatar.png',
-                        'size' => 90996,
-                        'type' => 'image/png',
-                        'error' => 0,
+                        'name'     => 'my-avatar.png',
+                        'size'     => 90996,
+                        'type'     => 'image/png',
+                        'error'    => 0,
                     ],
                 ],
             ],
@@ -229,10 +229,10 @@ class TestUploadedFileFactory extends TestCase
                 'details2' => [
                     'files2' => [
                         'tmp_name' => [__FILE__, __FILE__],
-                        'name' => ['file0.txt', 'file1.html'],
-                        'size' => [filesize(__FILE__), filesize(__FILE__)],
-                        'type' => ['text/plain', 'text/html'],
-                        'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+                        'name'     => ['file0.txt', 'file1.html'],
+                        'size'     => [filesize(__FILE__), filesize(__FILE__)],
+                        'type'     => ['text/plain', 'text/html'],
+                        'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
                     ],
                 ],
             ],
@@ -244,26 +244,26 @@ class TestUploadedFileFactory extends TestCase
         $files = [
             'file1' => [
                 'tmp_name' => 'phpUxcOty',
-                'name' => 'my-avatar.png',
-                'size' => 90996,
-                'type' => 'image/png',
-                'error' => 0,
+                'name'     => 'my-avatar.png',
+                'size'     => 90996,
+                'type'     => 'image/png',
+                'error'    => 0,
             ],
 
             'files1' => [
                 [
                     'tmp_name' => __FILE__,
-                    'name' => 'file0.txt',
-                    'size' => filesize(__FILE__),
-                    'type' => 'text/plain',
-                    'error' => UPLOAD_ERR_OK,
+                    'name'     => 'file0.txt',
+                    'size'     => filesize(__FILE__),
+                    'type'     => 'text/plain',
+                    'error'    => UPLOAD_ERR_OK,
                 ],
                 [
                     'tmp_name' => __FILE__,
-                    'name' => 'file1.html',
-                    'size' => filesize(__FILE__),
-                    'type' => 'text/html',
-                    'error' => UPLOAD_ERR_OK,
+                    'name'     => 'file1.html',
+                    'size'     => filesize(__FILE__),
+                    'type'     => 'text/html',
+                    'error'    => UPLOAD_ERR_OK,
                 ]
             ],
 
@@ -271,10 +271,10 @@ class TestUploadedFileFactory extends TestCase
                 'details' => [
                     'file2' => [
                         'tmp_name' => 'phpUxcOty',
-                        'name' => 'my-avatar.png',
-                        'size' => 90996,
-                        'type' => 'image/png',
-                        'error' => 0,
+                        'name'     => 'my-avatar.png',
+                        'size'     => 90996,
+                        'type'     => 'image/png',
+                        'error'    => 0,
                     ],
                 ],
             ],
@@ -284,17 +284,17 @@ class TestUploadedFileFactory extends TestCase
                     'files2' => [
                         [
                             'tmp_name' => __FILE__,
-                            'name' => 'file0.txt',
-                            'size' => filesize(__FILE__),
-                            'type' => 'text/plain',
-                            'error' => UPLOAD_ERR_OK,
+                            'name'     => 'file0.txt',
+                            'size'     => filesize(__FILE__),
+                            'type'     => 'text/plain',
+                            'error'    => UPLOAD_ERR_OK,
                         ],
                         [
                             'tmp_name' => __FILE__,
-                            'name' => 'file1.html',
-                            'size' => filesize(__FILE__),
-                            'type' => 'text/html',
-                            'error' => UPLOAD_ERR_OK,
+                            'name'     => 'file1.html',
+                            'size'     => filesize(__FILE__),
+                            'type'     => 'text/html',
+                            'error'    => UPLOAD_ERR_OK,
                         ]
                     ],
                 ],
@@ -314,11 +314,11 @@ class TestUploadedFileFactory extends TestCase
         $clientMediaType = 'text/html';
         $upf = $factory->createUploadedFile($st, $st->getSize(), UPLOAD_ERR_OK, $clientFilename, $clientMediaType);
         $upFiles = [
-            'file1' => $upf,
-            'files1' => [
+            'file1'    => $upf,
+            'files1'   => [
                 $upf, $upf
             ],
-            'my-form' => [
+            'my-form'  => [
                 'details' => [
                     'file2' => $upf
                 ],
@@ -336,9 +336,9 @@ class TestUploadedFileFactory extends TestCase
         self::assertNotNull($_FILES);
 
         $upFiles2 = [
-            $upf, $upf, $upf
+            'upfiles' => [$upf, $upf, $upf]
         ];
-        UploadedFileFactory::setGlobalsByUploadedFiles($upFiles2, 'upfiles');
+        UploadedFileFactory::setGlobalsByUploadedFiles($upFiles2);
         var_dump($_FILES);
         self::assertNotNull($_FILES);
     }

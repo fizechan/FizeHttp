@@ -173,14 +173,13 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * 设置服务端请求全局变量
      *
      * 本方法主要应用在模拟HTTP的单元测试中。
-     * @param array  $uploadedFiles 上传文件数组
-     * @param string $name          单文件时要设置的字段名
+     * @param array $uploadedFiles 上传文件数组
      * @return void
      */
-    public static function setGlobalsByUploadedFiles(array $uploadedFiles, string $name = 'file')
+    public static function setGlobalsByUploadedFiles(array $uploadedFiles)
     {
         global $_FILES;
-        $_FILES = self::convertToFilesArray($uploadedFiles, $name);
+        $_FILES = self::convertToFilesArray($uploadedFiles);
     }
 
     /**
@@ -223,31 +222,25 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
 
     /**
      * 将 PSR-7 UploadedFile 对象或数组转换为 $_FILES 格式
-     * @param UploadedFileInterface|array $uploadedFiles UploadedFile 对象或其数组
-     * @param string                      $name          单文件时要设置的字段名
+     * @param array $uploadedFiles UploadedFile 数组
      * @return array 符合 $_FILES 结构的数组
      */
-    protected static function convertToFilesArray($uploadedFiles, string $name): array
+    protected static function convertToFilesArray(array $uploadedFiles): array
     {
         $files = [];
-        if ($uploadedFiles instanceof UploadedFileInterface) {
-            // 单文件对象直接处理
-            $files[$name] = self::convertSingleFile($uploadedFiles);
-        } elseif (is_array($uploadedFiles)) {
-            // 遍历数组（字段名 => UploadedFile 对象或对象数组）
-            foreach ($uploadedFiles as $field => $fileOrArray) {
-                if (is_array($fileOrArray)) {
-                    if (self::isAssociativeArray($fileOrArray)) {
-                        // 下级路径
-                        $files[$field] = self::convertToFilesArray($fileOrArray, $name);
-                    } else {
-                        // 多文件上传（如：$files['documents'][0]）
-                        $files[$field] = self::convertFileArray($fileOrArray);
-                    }
+        // 遍历数组（字段名 => UploadedFile 对象或对象数组）
+        foreach ($uploadedFiles as $field => $fileOrArray) {
+            if (is_array($fileOrArray)) {
+                if (self::isAssociativeArray($fileOrArray)) {
+                    // 下级路径
+                    $files[$field] = self::convertToFilesArray($fileOrArray);
                 } else {
-                    // 单文件上传（如：$files['avatar']）
-                    $files[$field] = self::convertSingleFile($fileOrArray);
+                    // 多文件上传（如：$files['documents'][0]）
+                    $files[$field] = self::convertFileArray($fileOrArray);
                 }
+            } else {
+                // 单文件上传（如：$files['avatar']）
+                $files[$field] = self::convertSingleFile($fileOrArray);
             }
         }
         return $files;
