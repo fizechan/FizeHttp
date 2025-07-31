@@ -19,11 +19,11 @@
     "ext-curl": "*",
     "fize/io": "^9.1.0",
     "fize/stream": "^3.0.0",
-    "psr/http-client": "*",
-    "psr/http-factory": "*",
-    "psr/http-message": "*",
-    "psr/http-server-handler": "*",
-    "psr/http-server-middleware": "*"
+    "psr/http-client": "^1.0.0",
+    "psr/http-factory": "^1.1.0",
+    "psr/http-message": "^2.0.0",
+    "psr/http-server-handler": "^1.0.0",
+    "psr/http-server-middleware": "^1.0.0"
   },
   "suggest": {
     "ext-fileinfo": "*"
