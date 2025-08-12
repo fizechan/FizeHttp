@@ -248,13 +248,13 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
 
     /**
      * 转换单个 UploadedFile 对象为 $_FILES 单元
-     * @param UploadedFileInterface $file
+     * @param UploadedFile $file
      * @return array
      */
-    protected static function convertSingleFile(UploadedFileInterface $file): array
+    protected static function convertSingleFile(UploadedFile $file): array
     {
         return [
-            'tmp_name' => self::getTempFilePath($file), // 模拟临时路径
+            'tmp_name' => $file->getTmpName(),
             'name'     => $file->getClientFilename(),
             'size'     => $file->getSize(),
             'type'     => $file->getClientMediaType(),
@@ -264,32 +264,20 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
 
     /**
      * 转换 UploadedFile 对象数组为 $_FILES 的多文件结构
-     * @param array $files
+     * @param UploadedFile[] $files
      * @return array
      */
     private static function convertFileArray(array $files): array
     {
         $result = ['tmp_name' => [], 'name' => [], 'size' => [], 'type' => [], 'error' => []];
         foreach ($files as $file) {
-            $result['tmp_name'][] = self::getTempFilePath($file);
+            $result['tmp_name'][] = $file->getTmpName();
             $result['name'][] = $file->getClientFilename();
             $result['size'][] = $file->getSize();
             $result['type'][] = $file->getClientMediaType();
             $result['error'][] = $file->getError();
         }
         return $result;
-    }
-
-    /**
-     * 获取临时文件路径（若文件已移动则返回空）
-     * @param UploadedFileInterface $file
-     * @return string
-     */
-    private static function getTempFilePath(UploadedFileInterface $file): string
-    {
-        $stream = $file->getStream();
-        $metadata = $stream->getMetadata();
-        return $metadata['uri'] ?? ''; // 返回流资源 URI（如 php://temp）
     }
 
     /**
@@ -318,6 +306,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * 是否为关联数组
      * @param array $array
      * @return bool
+     * @todo 考虑移除到外部。
      */
     protected static function isAssociativeArray(array $array): bool
     {

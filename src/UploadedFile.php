@@ -194,6 +194,17 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     * 获取临时文件路径（若文件已移动则返回空）
+     * @return string
+     */
+    public function getTmpName(): string
+    {
+        $stream = $this->getStream();
+        $metadata = $stream->getMetadata();
+        return $metadata['uri'] ?? ''; // 返回流资源 URI（如 php://temp）
+    }
+
+    /**
      * 设置测试模式
      * @param bool $forTest true表示测试模式，false表示生产模式。
      * @return void
