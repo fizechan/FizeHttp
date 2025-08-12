@@ -51,16 +51,17 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * 本方法主要应用在HTTP的单元测试中。
      * @param ServerRequestInterface $request 服务端请求
      */
-    public function setGlobals(ServerRequestInterface $request)
+    public static function setGlobals(ServerRequestInterface $request)
     {
-        global $_SERVER, $_COOKIE, $_GET, $_POST;
+        global $_SERVER, $_COOKIE, $_GET, $_POST, $_REQUEST;
         $_SERVER = $request->getServerParams();
         $_SERVER['REQUEST_METHOD'] = $request->getMethod();
         $_SERVER['SERVER_PROTOCOL'] = $request->getProtocolVersion();
         $_COOKIE = $request->getCookieParams();
         $_GET = $request->getQueryParams();
-        $_POST = $request->getParsedBody();
-        (new UploadedFileFactory())->setGlobalsByUploadedFiles($request->getUploadedFiles());
+        $_POST = $request->getParsedBody() ?: [];
+        $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
+        UploadedFileFactory::setGlobalsByUploadedFiles($request->getUploadedFiles());
     }
 
     /**
