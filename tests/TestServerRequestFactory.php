@@ -60,7 +60,7 @@ class TestServerRequestFactory extends TestCase
     public function testSetGlobals()
     {
         $factory = new ServerRequestFactory();
-        $sr = $factory->createServerRequest('POST', 'https://www.baidu.com');
+        $sr = $factory->createServerRequest('POST', 'https://www.baidu.com/dir1/dir2/dir3/test.php?kwd=cfz&age=36&sex=male');
         $_FILES = [
             'files' => [
                 'name' => [

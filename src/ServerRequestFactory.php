@@ -55,8 +55,26 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     {
         global $_SERVER, $_COOKIE, $_GET, $_POST, $_REQUEST;
         $_SERVER = $request->getServerParams();
+        $uri = $request->getUri();
+        $_SERVER['SERVER_NAME'] = $uri->getHost();
+        $_SERVER['REQUEST_URI'] = $uri->getPath();
+        $_SERVER['HTTP_HOST'] = $uri->getHost();
         $_SERVER['REQUEST_METHOD'] = $request->getMethod();
-        $_SERVER['SERVER_PROTOCOL'] = $request->getProtocolVersion();
+        $_SERVER['SERVER_PROTOCOL'] = 'HTTP/' . $request->getProtocolVersion();
+        $_SERVER['REQUEST_TIME'] = time();
+        $_SERVER['QUERY_STRING'] = $uri->getQuery();
+        $_SERVER['HTTP_ACCEPT'] = $request->getHeaderLine('Accept');
+        $_SERVER['HTTP_ACCEPT_CHARSET'] = $request->getHeaderLine('Accept-Charset');
+        $_SERVER['HTTP_REFERER'] = $uri->getHost();
+        $_SERVER['HTTPS'] = $uri->getScheme() === 'https' ? 'on' : 'off';
+        $_SERVER['REMOTE_ADDR'] = $uri->getHost();
+        $_SERVER['REMOTE_HOST'] = $uri->getHost();
+        $_SERVER['REMOTE_PORT'] = $uri->getPort();
+        $_SERVER['SCRIPT_FILENAME'] = __FILE__;
+        $_SERVER['SERVER_PORT'] = $uri->getPort();
+        $_SERVER['PATH_TRANSLATED'] = $uri->getPath();
+        $_SERVER['SCRIPT_NAME'] = $uri->getPath();
+        $_SERVER['SCRIPT_URI'] = $uri->getPath();
         $_COOKIE = $request->getCookieParams();
         $_GET = $request->getQueryParams();
         $_POST = $request->getParsedBody() ?: [];
