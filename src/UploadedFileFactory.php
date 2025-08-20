@@ -92,7 +92,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
                             'size'     => $item['size'][$index],
                             'type'     => $item['type'][$index],
                             'error'    => $item['error'][$index],
-                            'for_test' => $files['for_test'][$index] ?? false
+                            'for_test' => $item['for_test'][$index] ?? false
                         ];
                         $uploaded_files2[] = $this->createUploadedFileFromSpec($file);
                     }
