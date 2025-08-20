@@ -237,7 +237,7 @@ class UploadedFile implements UploadedFileInterface
         if (is_dir($fdir)) {
             return;
         }
-        if (mkdir($fdir, 0666, true)) {
+        if (mkdir($fdir, 0777, true)) {
             return;
         }
         throw new RuntimeException("directory `$fdir` creation failed");
