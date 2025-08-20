@@ -138,6 +138,7 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file) {
+            $this->checkPath($targetPath);
             if ($this->forTest) {
                 $this->moved = copy($this->file, $targetPath);  // 测试模式下，仅复制，不删除原文件。
             } else {
@@ -221,6 +222,25 @@ class UploadedFile implements UploadedFileInterface
     public function isForTest(): bool
     {
         return $this->forTest;
+    }
+
+    /**
+     * 检查目录是否可写
+     * @param string $path 路径
+     */
+    protected function checkPath(string $path)
+    {
+        if (is_file($path)) {
+            throw new RuntimeException("has the same filename: $path");
+        }
+        $fdir = dirname($path);
+        if (is_dir($fdir)) {
+            return;
+        }
+        if (mkdir($fdir, 0666, true)) {
+            return;
+        }
+        throw new RuntimeException("directory `$fdir` creation failed");
     }
 
     /**
