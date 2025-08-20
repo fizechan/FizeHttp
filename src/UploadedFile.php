@@ -205,13 +205,22 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * 设置测试模式
+     * 设置测试模式，测试模式下，原始文件不删除，以复制模式上传文件。
      * @param bool $forTest true表示测试模式，false表示生产模式。
      * @return void
      */
     public function forTest(bool $forTest = true): void
     {
         $this->forTest = $forTest;
+    }
+
+    /**
+     * 判断是否为测试模式
+     * @return bool
+     */
+    public function isForTest(): bool
+    {
+        return $this->forTest;
     }
 
     /**

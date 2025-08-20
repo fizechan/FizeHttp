@@ -41,13 +41,17 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     public function createUploadedFileFromSpec(array $file): UploadedFileInterface
     {
         self::assertIsUploadItem($file);
-        return new UploadedFile(
+        $upFile = new UploadedFile(
             $file['tmp_name'],
             (int)$file['size'],
             (int)$file['error'],
             $file['name'],
             $file['type']
         );
+        if (isset($file['for_test']) && $file['for_test']) {
+            $upFile->forTest();
+        }
+        return $upFile;
     }
 
     /**
@@ -66,7 +70,8 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
                         'name'     => $files['name'][$index],
                         'size'     => $files['size'][$index],
                         'type'     => $files['type'][$index],
-                        'error'    => $files['error'][$index]
+                        'error'    => $files['error'][$index],
+                        'for_test' => $files['for_test'][$index] ?? false
                     ];
                     $uploaded_files[] = $this->createUploadedFileFromSpec($file);
                 }
@@ -86,7 +91,8 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
                             'name'     => $item['name'][$index],
                             'size'     => $item['size'][$index],
                             'type'     => $item['type'][$index],
-                            'error'    => $item['error'][$index]
+                            'error'    => $item['error'][$index],
+                            'for_test' => $files['for_test'][$index] ?? false
                         ];
                         $uploaded_files2[] = $this->createUploadedFileFromSpec($file);
                     }
@@ -199,20 +205,31 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
                 $sizes = [];
                 $types = [];
                 $errors = [];
+                $for_tests = [];
+                $isForTest = false;
                 foreach ($item as $upFile) {
                     $tmp_names[] = $upFile['tmp_name'];
                     $names[] = $upFile['name'];
                     $sizes[] = $upFile['size'];
                     $types[] = $upFile['type'];
                     $errors[] = $upFile['error'];
+                    $for_test = $upFile['for_test'] ?? false;
+                    $for_tests[] = $for_test;
+                    if ($for_test) {
+                        $isForTest = true;
+                    }
                 }
-                $uploaded_files[$key] = [
+                $item = [
                     'tmp_name' => $tmp_names,
                     'name'     => $names,
                     'size'     => $sizes,
                     'type'     => $types,
                     'error'    => $errors,
                 ];
+                if ($isForTest) {
+                    $item['for_test'] = $for_tests;
+                }
+                $uploaded_files[$key] = $item;
             } else {
                 $uploaded_files[$key] = self::convertToGlobalFiles($item);
             }
@@ -240,7 +257,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
                 }
             } else {
                 // 单文件上传（如：$files['avatar']）
-                $files[$field] = self::convertSingleFile($fileOrArray);
+                $files[$field] = self::convertFileSingle($fileOrArray);
             }
         }
         return $files;
@@ -251,15 +268,19 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * @param UploadedFile $file
      * @return array
      */
-    protected static function convertSingleFile(UploadedFile $file): array
+    protected static function convertFileSingle(UploadedFile $file): array
     {
-        return [
+        $upFile = [
             'tmp_name' => $file->getTmpName(),
             'name'     => $file->getClientFilename(),
             'size'     => $file->getSize(),
             'type'     => $file->getClientMediaType(),
-            'error'    => $file->getError(),
+            'error'    => $file->getError()
         ];
+        if ($file->isForTest()) {
+            $upFile['for_test'] = true;
+        }
+        return $upFile;
     }
 
     /**
@@ -270,12 +291,22 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     private static function convertFileArray(array $files): array
     {
         $result = ['tmp_name' => [], 'name' => [], 'size' => [], 'type' => [], 'error' => []];
+        $for_tests = [];
+        $isForTest = false;
         foreach ($files as $file) {
             $result['tmp_name'][] = $file->getTmpName();
             $result['name'][] = $file->getClientFilename();
             $result['size'][] = $file->getSize();
             $result['type'][] = $file->getClientMediaType();
             $result['error'][] = $file->getError();
+            $for_test = $file->isForTest();
+            $for_tests[] = $for_test;
+            if ($for_test) {
+                $isForTest = true;
+            }
+        }
+        if ($isForTest) {
+            $result['for_test'] = $for_tests;
         }
         return $result;
     }
