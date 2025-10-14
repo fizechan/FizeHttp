@@ -222,8 +222,7 @@ class ClientOnce
      */
     protected static function sendRequest(string $method, string $url, $body = null, array $headers = [], array $opts = [], string $cookie_dir = null, int $time_out = 30, int $retries = 1): ResponseInterface
     {
-        $uri = new Uri($url);
-        $client = new ClientSimple($uri->getHost(), $cookie_dir, $time_out, $retries, $opts);
-        return $client->sendRequest($method, $uri, $body, $headers);
+        $client = new ClientSimple('', $cookie_dir, $time_out, $retries, $opts);
+        return $client->sendRequest($method, $url, $body, $headers);
     }
 }

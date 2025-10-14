@@ -10,8 +10,8 @@ class TestClientEasy extends TestCase
 
     public function testGet()
     {
-        $client = new ClientEasy('https://www.baidu.com');
-        $response = $client->get('');
+        $client = new ClientEasy();
+        $response = $client->get('https://www.baidu.com');
         var_export($response);
         self::assertIsObject($response);
     }
@@ -73,12 +73,12 @@ class TestClientEasy extends TestCase
 
     public function testPut()
     {
-        $client = new ClientEasy('http://api.fanyi.baidu.com');
+        $client = new ClientEasy();
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
         $body = '{"q":"定制化翻译API语言方向目前只支持中文和英文。","from":"zh","to":"en","appid":"20160118000009064","salt":"123456","sign":"9ac0dad8ab7abafc710bf5a9a8516e51"}';
-        $response = $client->put('/api/trans/vip/translate', $body, $headers);
+        $response = $client->put('http://api.fanyi.baidu.com/api/trans/vip/translate', $body, $headers);
         var_export($response);
         self::assertIsObject($response);
     }

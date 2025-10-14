@@ -23,7 +23,7 @@ class ClientEasy
      * @param int         $retries    curl重试次数
      * @param array       $opts       CURL选项
      */
-    public function __construct(string $host, string $cookie_dir = null, int $time_out = 30, int $retries = 1, array $opts = [])
+    public function __construct(string $host = '', string $cookie_dir = null, int $time_out = 30, int $retries = 1, array $opts = [])
     {
         $this->client = new ClientSimple($host, $cookie_dir, $time_out, $retries, $opts);
     }
