@@ -31,11 +31,15 @@ class ClientEasy
     /**
      * GET 请求
      * @param string $uri     指定链接
-     * @param array  $headers 附加的文件头
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function get(string $uri, array $headers = []): ResponseInterface
+    public function get(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('GET', $uri, null, $headers);
     }
 
@@ -43,33 +47,45 @@ class ClientEasy
      * POST 请求
      * @param string       $uri     指定链接
      * @param string|array $body    请求体
-     * @param array        $headers 设定请求头设置
+     * @param array        $headers 请求头设置
+     * @param array        $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function post(string $uri, $body, array $headers = []): ResponseInterface
+    public function post(string $uri, $body, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('POST', $uri, $body, $headers);
     }
 
     /**
      * OPTIONS 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function options(string $uri, array $headers = []): ResponseInterface
+    public function options(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('OPTIONS', $uri, null, $headers);
     }
 
     /**
      * HEAD 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function head(string $uri, array $headers = []): ResponseInterface
+    public function head(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         $opts = [
             CURLOPT_NOBODY => true  // 不返回主体内容，否则会超时。
         ];
@@ -80,22 +96,30 @@ class ClientEasy
     /**
      * DELETE 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function delete(string $uri, array $headers = []): ResponseInterface
+    public function delete(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('DELETE', $uri, null, $headers);
     }
 
     /**
      * PATCH 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function patch(string $uri, array $headers = []): ResponseInterface
+    public function patch(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('PATCH', $uri, null, $headers);
     }
 
@@ -103,77 +127,105 @@ class ClientEasy
      * PUT 请求
      * @param string       $uri     指定链接
      * @param string|array $body    请求体
-     * @param array        $headers 设定请求头设置
+     * @param array        $headers 请求头设置
+     * @param array        $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function put(string $uri, $body = '', array $headers = []): ResponseInterface
+    public function put(string $uri, $body = '', array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('PUT', $uri, $body, $headers);
     }
 
     /**
      * TRACE 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function trace(string $uri, array $headers = []): ResponseInterface
+    public function trace(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('TRACE', $uri, null, $headers);
     }
 
     /**
      * MOVE 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function move(string $uri, array $headers = []): ResponseInterface
+    public function move(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('MOVE', $uri, null, $headers);
     }
 
     /**
      * COPY 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function copy(string $uri, array $headers = []): ResponseInterface
+    public function copy(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('COPY', $uri, null, $headers);
     }
 
     /**
      * LINK 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function link(string $uri, array $headers = []): ResponseInterface
+    public function link(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('LINK', $uri, null, $headers);
     }
 
     /**
      * UNLINK 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function unlink(string $uri, array $headers = []): ResponseInterface
+    public function unlink(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('UNLINK', $uri, null, $headers);
     }
 
     /**
      * WRAPPED 请求
      * @param string $uri     指定链接
-     * @param array  $headers 设定请求头设置
+     * @param array  $headers 请求头设置
+     * @param array  $options CURL选项
      * @return ResponseInterface 返回响应对象
      */
-    public function wrapped(string $uri, array $headers = []): ResponseInterface
+    public function wrapped(string $uri, array $headers = [], array $options = []): ResponseInterface
     {
+        if ($options) {
+            $this->client->setOptions($options);
+        }
         return $this->client->sendRequest('WRAPPED', $uri, null, $headers);
     }
 }
