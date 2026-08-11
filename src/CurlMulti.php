@@ -25,10 +25,29 @@ class CurlMulti
      */
     public function __destruct()
     {
-        if ($this->mh && get_resource_type($this->mh) == 'curl_multi') {
+        if ($this->mh && self::isCurlMultiHandle($this->mh)) {
             $this->close();
         }
         $this->mh = null;
+    }
+
+    /**
+     * 判断给定值是否为有效的 CURL 批处理句柄
+     *
+     * 兼容 PHP7 的 resource 类型与 PHP8 的 CurlMultiHandle 对象类型。
+     *
+     * @param mixed $mh
+     * @return bool
+     */
+    private static function isCurlMultiHandle($mh): bool
+    {
+        if (is_resource($mh)) {
+            return get_resource_type($mh) === 'curl_multi';
+        }
+        if (is_object($mh)) {
+            return get_class($mh) === 'CurlMultiHandle';
+        }
+        return false;
     }
 
     /**

@@ -37,10 +37,29 @@ class Curl
      */
     public function __destruct()
     {
-        if ($this->handle && get_resource_type($this->handle) == 'curl') {
+        if ($this->handle && self::isCurlHandle($this->handle)) {
             $this->close();
         }
         $this->handle = null;
+    }
+
+    /**
+     * 判断给定值是否为有效的 CURL 句柄
+     *
+     * 兼容 PHP7 的 resource 类型与 PHP8 的 CurlHandle 对象类型。
+     *
+     * @param mixed $handle
+     * @return bool
+     */
+    private static function isCurlHandle($handle): bool
+    {
+        if (is_resource($handle)) {
+            return get_resource_type($handle) === 'curl';
+        }
+        if (is_object($handle)) {
+            return get_class($handle) === 'CurlHandle';
+        }
+        return false;
     }
 
     /**
