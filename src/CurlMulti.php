@@ -4,6 +4,7 @@ namespace Fize\Http;
 
 /**
  * 多进程 CURL
+ * @deprecated PHP8后原生支持，使用PHP8及后续版本。
  */
 class CurlMulti
 {

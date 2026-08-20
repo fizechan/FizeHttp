@@ -66,14 +66,10 @@ class ClientMulti
      *
      * 返回数组的键名与 addRequest / sendRequests 传入的键名（或自动索引）保持一致。
      * 发送完成后会清空当前请求队列，以避免重复发送。
-     * 若某个请求发生 CURL 错误，会抛出 NetworkException 或 ClientException（与 Client 行为一致）。
-     *
-     * @return ResponseInterface[]
-     * @throws ClientException
-     * @throws NetworkException
-     * @throws RequestException
+     * @param array $exceptions 收集到的异常对象
+     * @return ResponseInterface[] 失败则元素为null。
      */
-    public function send()
+    public function send(array &$exceptions = []): array
     {
         if (empty($this->requests)) {
             return [];
@@ -105,20 +101,24 @@ class ClientMulti
         foreach ($handles as $key => $curl) {
             $ch = $curl->getHandle();
             $content = CurlMulti::getcontent($ch);
-            $status = $curl->getinfo();
+            $info = $curl->getinfo();
 
             if ($curl->errno()) {
                 if ($curl->errno() == CURLE_COULDNT_RESOLVE_HOST || $curl->errno() == CURLE_COULDNT_CONNECT) {
-                    throw new NetworkException($this->requests[$key], $curl->error(), $curl->errno());
+                    $exceptions[$key] = new NetworkException($this->requests[$key], $curl->error(), $curl->errno());
+                    $responses[$key] = null;
+                    continue;
                 }
-                throw new ClientException($curl->error(), $curl->errno());
+                $exceptions[$key] = new ClientException($curl->error(), $curl->errno());
+                $responses[$key] = null;
+                continue;
             }
 
             $header_size = $curl->getinfo(CURLINFO_HEADER_SIZE);
             $headers = $this->analysisHeaders(substr($content, 0, $header_size));
             $body = substr($content, $header_size);
 
-            $responses[$key] = new Response($body, intval($status['http_code']), $headers);
+            $responses[$key] = new Response($body, intval($info['http_code']), $headers);
         }
 
         // 清空请求队列，避免重复发送
@@ -128,14 +128,15 @@ class ClientMulti
     }
 
     /**
-     * 发送一个 PSR-7 标准的请求，返回一个 PSR-7 标准的响应
-     * @param RequestInterface[] $requests
-     * @return ResponseInterface[]
+     * 发送 PSR-7 标准的请求数组，返回一个 PSR-7 标准的响应数组
+     * @param RequestInterface[] $requests   请求数组
+     * @param array              $exceptions 收集到的异常对象
+     * @return ResponseInterface[] 失败则元素为null。
      */
-    public function sendRequests(array $requests): array
+    public function sendRequests(array $requests, array &$exceptions = []): array
     {
         $this->requests = $requests;
-        return $this->send();
+        return $this->send($exceptions);
     }
 
     /**
@@ -180,7 +181,7 @@ class ClientMulti
             $cookie_file = $this->cookieFileDir . $request->getUri()->getHost() . '.cookie';
             new File($cookie_file, 'w'); // 自动创建文件
 
-            $options[CURLOPT_COOKIEJAR] = $cookie_file; // 调用后保存cookie的文件
+            $options[CURLOPT_COOKIEJAR] = $cookie_file;  // 调用后保存cookie的文件
             $options[CURLOPT_COOKIEFILE] = $cookie_file; // 要一起传送的cookie的文件
         }
 
