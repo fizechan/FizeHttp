@@ -94,7 +94,7 @@ class UploadedFile implements UploadedFileInterface
         }
         $this->setClientMediaType($client_mime);
 
-        if ($this->isUploadOK()) {
+        if ($this->error === UPLOAD_ERR_OK) {
             $this->setStreamOrFile($streamOrFile);
         }
     }
@@ -301,15 +301,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * 判断上传是否无错误
-     * @return bool
-     */
-    private function isUploadOK(): bool
-    {
-        return $this->error === UPLOAD_ERR_OK;
-    }
-
-    /**
      * 设置文件或数据流
      * @param StreamInterface|string|resource $streamOrFile 文件或数据流
      */
@@ -333,7 +324,7 @@ class UploadedFile implements UploadedFileInterface
      */
     private function validateActive()
     {
-        if (false === $this->isUploadOK()) {
+        if ($this->error !== UPLOAD_ERR_OK) {
             throw new RuntimeException('Cannot retrieve stream due to upload error');
         }
 
