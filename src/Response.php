@@ -99,7 +99,7 @@ class Response extends Message implements ResponseInterface
      * @param string                               $protocol_version 协议版本
      * @param string|null                          $reason           状态短语
      */
-    public function __construct($body = null, int $status = 200, array $headers = [], string $protocol_version = '1.1', string $reason = null)
+    public function __construct($body = null, int $status = 200, array $headers = [], string $protocol_version = '1.1', ?string $reason = null)
     {
         $this->assertStatusCodeIsInteger($status);
         $this->assertStatusCodeRange($status);
